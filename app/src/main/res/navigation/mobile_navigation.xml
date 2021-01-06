@@ -7,19 +7,19 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.study.locationawareapp.ui.home.HomeFragment"
+        android:name="com.study.locationawareapp.ui.destination.DestinationFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_destination" />
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="com.study.locationawareapp.ui.dashboard.DashboardFragment"
+        android:name="com.study.locationawareapp.ui.map.MapFragment"
         android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        tools:layout="@layout/fragment_map" />
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="com.study.locationawareapp.ui.notifications.NotificationsFragment"
+        android:name="com.study.locationawareapp.ui.directions.DirectionsFragment"
         android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        tools:layout="@layout/fragment_directions" />
 </navigation>
