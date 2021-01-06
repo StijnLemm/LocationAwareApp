@@ -1,19 +1,25 @@
 package com.study.locationawareapp.ui.destination;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
+
 import androidx.lifecycle.ViewModel;
 
-public class DestinationViewModel extends ViewModel {
+import java.util.ArrayList;
 
-    private MutableLiveData<String> mText;
+public class DestinationViewModel extends ViewModel implements ListProvider{
+
+    private final DestinationModel destinationModel;
 
     public DestinationViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is home fragment");
+        this.destinationModel = new DestinationModel();
     }
 
-    public LiveData<String> getText() {
-        return mText;
+
+    public int size() {
+        return destinationModel.getPastDestinations().size();
+    }
+
+    @Override
+    public ArrayList<String> getList() {
+        return destinationModel.getPastDestinations();
     }
 }
