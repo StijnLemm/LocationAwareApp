@@ -9,18 +9,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.study.locationawareapp.R;
 import com.study.locationawareapp.services.LocationForegroundService;
 
 import org.osmdroid.api.IMapController;
+import org.osmdroid.config.Configuration;
+import org.osmdroid.library.BuildConfig;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.CustomZoomButtonsController;
@@ -29,12 +29,19 @@ import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 
 public class MapFragment extends Fragment {
 
-    private MapViewModel dashboardViewModel;
+    private MapView mapView;
+    private MapViewModel mapViewModel;
     private BroadcastReceiver broadcastReceiver;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Configuration.getInstance().setUserAgentValue(BuildConfig.APPLICATION_ID);
+    }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        dashboardViewModel =
+        mapViewModel =
                 new ViewModelProvider(this).get(MapViewModel.class);
         return inflater.inflate(R.layout.fragment_map, container, false);
     }
@@ -42,20 +49,13 @@ public class MapFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        MapView mapView = view.findViewById(R.id.MapView_Map);
-        mapView.setTileSource(TileSourceFactory.DEFAULT_TILE_SOURCE);
+        this.mapView = view.findViewById(R.id.MapView_Map);
+        this.mapViewModel.setMapView(this.mapView);
+        this.registerGPSReceiver();
+    }
 
-        IMapController controller = mapView.getController();
-        controller.setZoom(14d);
-
-        RotationGestureOverlay rotationGestureOverlay = new RotationGestureOverlay(mapView);
-        rotationGestureOverlay.setEnabled(true);
-        mapView.setMultiTouchControls(true);
-        mapView.getOverlays().add(rotationGestureOverlay);
-
-        mapView.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.NEVER);
+    private void registerGPSReceiver(){
         IntentFilter intentFilter = new IntentFilter();
-
         intentFilter.addAction(LocationForegroundService.GPS_SERVICE_INTENT_ACTION);
         this.broadcastReceiver = new BroadcastReceiver() {
             @Override
@@ -63,13 +63,16 @@ public class MapFragment extends Fragment {
                 double lon = intent.getDoubleExtra(LocationForegroundService.GPS_LONGITUDE_INTENT_KEY, Double.MAX_VALUE);
                 double lat = intent.getDoubleExtra(LocationForegroundService.GPS_LATITUDE_INTENT_KEY, Double.MAX_VALUE);
 
-                Log.v("BROADCAST", "lon: " + lon);
-                Log.v("BROADCAST", "lat: " + lat);
-
-                GeoPoint location = new GeoPoint(lon, lat);
-                controller.setCenter(location);
+                GeoPoint location = new GeoPoint(lat, lon);
+                mapViewModel.setLastLocation(location);
             }
         };
         getContext().getApplicationContext().registerReceiver(broadcastReceiver, intentFilter);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getContext().getApplicationContext().unregisterReceiver(broadcastReceiver);
     }
 }
