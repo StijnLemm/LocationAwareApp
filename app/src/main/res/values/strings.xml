@@ -3,4 +3,5 @@
     <string name="title_destination">Destination</string>
     <string name="title_map">Map</string>
     <string name="title_steps">Steps</string>
+    <string name="last_used_locations">Last used locations</string>
 </resources>
