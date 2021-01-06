@@ -4,4 +4,6 @@
     <string name="title_map">Map</string>
     <string name="title_steps">Steps</string>
     <string name="currentDirectionString" />
+    <string name="last_used_locations">Last used locations</string>
+    <string name="breda_central">Breda central</string>
 </resources>
