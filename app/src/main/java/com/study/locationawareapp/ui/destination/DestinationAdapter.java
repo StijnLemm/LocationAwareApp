@@ -29,9 +29,11 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        //todo fill the holder
-        String name = listProvider.getList().get(position);
-        holder.setName(name);
+        Destination destination = listProvider.getList().get(position);
+
+        holder.setTitle(destination.getName());
+        holder.setDuration(""+destination.getDurationInMinutes());
+        holder.setSwitches(""+destination.getSwitches());
     }
 
     @Override
@@ -42,14 +44,27 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         private TextView title;
+        private TextView duration;
+        private TextView switches;
 
-        public void setName(String title) {
+
+        public void setTitle(String title) {
             this.title.setText(title);
+        }
+
+        public void setDuration(String duration) {
+            this.duration.setText(duration);
+        }
+
+        public void setSwitches(String switches) {
+            this.switches.setText(switches);
         }
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             this.title = itemView.findViewById(R.id.TextView_destinationItem_title);
+            this.duration = itemView.findViewById(R.id.TextView_destinationItem_duration);
+            this.switches = itemView.findViewById(R.id.TextView_destinationItem_switches);
         }
     }
 }

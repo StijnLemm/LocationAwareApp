@@ -19,7 +19,7 @@ public class DestinationViewModel extends ViewModel implements ListProvider{
     }
 
     @Override
-    public ArrayList<String> getList() {
+    public ArrayList<Destination> getList() {
         return destinationModel.getPastDestinations();
     }
 }
