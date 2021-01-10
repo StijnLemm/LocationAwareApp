@@ -12,7 +12,7 @@ public class Destination {
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.durationInMinutes = 100;
+        this.durationInMinutes = 0;
     }
 
     public String getName() {
