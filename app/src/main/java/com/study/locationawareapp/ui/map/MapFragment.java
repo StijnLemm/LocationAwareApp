@@ -1,11 +1,6 @@
 package com.study.locationawareapp.ui.map;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,23 +10,18 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.study.locationawareapp.R;
-import com.study.locationawareapp.services.LocationForegroundService;
 
-import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.library.BuildConfig;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
-import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 
-public class MapFragment extends Fragment {
+public class MapFragment extends Fragment implements View.OnClickListener, MapController {
 
     private MapView mapView;
     private MapViewModel mapViewModel;
-    private BroadcastReceiver broadcastReceiver;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,29 +40,35 @@ public class MapFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         this.mapView = view.findViewById(R.id.MapView_Map);
-        this.mapViewModel.setMapView(this.mapView);
-        this.registerGPSReceiver();
+        this.mapViewModel.setController(this);
+        this.mapViewModel.initMapView(this.mapView);
+
+        FloatingActionButton fab = view.findViewById(R.id.Button_CenterMapButton);
+        fab.setOnClickListener(this);
     }
 
-    private void registerGPSReceiver(){
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(LocationForegroundService.GPS_SERVICE_INTENT_ACTION);
-        this.broadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                double lon = intent.getDoubleExtra(LocationForegroundService.GPS_LONGITUDE_INTENT_KEY, Double.MAX_VALUE);
-                double lat = intent.getDoubleExtra(LocationForegroundService.GPS_LATITUDE_INTENT_KEY, Double.MAX_VALUE);
+    @Override
+    public void setCenter(GeoPoint location) {
+        this.getActivity().runOnUiThread(() -> {
+            this.mapView.getController().setCenter(location);
+        });
+    }
 
-                GeoPoint location = new GeoPoint(lat, lon);
-                mapViewModel.setLastLocation(location);
-            }
-        };
-        getContext().getApplicationContext().registerReceiver(broadcastReceiver, intentFilter);
+    @Override
+    public void setCenterAnimated(GeoPoint location) {
+        this.getActivity().runOnUiThread(() -> {
+            this.mapView.getController().animateTo(location);
+        });
+    }
+
+    //fab button click
+    @Override
+    public void onClick(View view) {
+        this.mapViewModel.centerMapAnimated();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        getContext().getApplicationContext().unregisterReceiver(broadcastReceiver);
     }
 }

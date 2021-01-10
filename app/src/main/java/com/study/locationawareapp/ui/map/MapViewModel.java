@@ -1,7 +1,5 @@
 package com.study.locationawareapp.ui.map;
 
-import android.util.Log;
-
 import androidx.lifecycle.ViewModel;
 
 import org.osmdroid.api.IMapController;
@@ -9,52 +7,52 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.gestures.RotationGestureDetector;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 public class MapViewModel extends ViewModel {
 
-    private MapView mapView;
-    private IMapController controller;
-    private RotationGestureOverlay rotationGestureOverlay;
+    private MyLocationNewOverlay myLocationNewOverlay;
+    private MapController mapController;
 
     public MapViewModel() {
     }
 
-    public void setMapView(MapView mapView) {
-        this.mapView = mapView;
-        this.initMapView();
+    public void initMapView(MapView mapView){
+        mapView.setTileSource(TileSourceFactory.MAPNIK);
+        mapView.setUseDataConnection(true);
+
+        IMapController controller = mapView.getController();
+        controller.setZoom(15d);
+
+        this.myLocationNewOverlay = new MyLocationNewOverlay(mapView);
+        this.myLocationNewOverlay.enableMyLocation();
+        this.myLocationNewOverlay.setDrawAccuracyEnabled(true);
+
+        RotationGestureOverlay rotationGestureOverlay = new RotationGestureOverlay(mapView);
+        rotationGestureOverlay.setEnabled(true);
+        mapView.setMultiTouchControls(true);
+
+        mapView.getOverlays().add(rotationGestureOverlay);
+        mapView.getOverlays().add(this.myLocationNewOverlay);
+
+        mapView.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.NEVER);
+        this.myLocationNewOverlay.runOnFirstFix(this::centerMap);
     }
 
-    private void initMapView(){
-        this.mapView.setTileSource(TileSourceFactory.MAPNIK);
-        this.mapView.setUseDataConnection(true);
-
-        this.controller = this.mapView.getController();
-        this.controller.setZoom(15d);
-
-        this.rotationGestureOverlay = new RotationGestureOverlay(this.mapView);
-        this.rotationGestureOverlay.setEnabled(true);
-        this.mapView.setMultiTouchControls(true);
-        this.mapView.getOverlays().add(this.rotationGestureOverlay);
-        this.mapView.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.NEVER);
+    private GeoPoint getLastLocation(){
+        return this.myLocationNewOverlay.getMyLocation();
     }
 
-    private GeoPoint lastLocation;
-
-    public void setLastLocation(GeoPoint location) {
-
-        if(this.lastLocation == null){
-            this.lastLocation = location;
-            return;
-        }
-
-        this.rotateMap(location);
-        this.controller.animateTo(location);
-        this.lastLocation = location;
+    private void centerMap(){
+        this.mapController.setCenter(this.getLastLocation());
     }
 
-    private void rotateMap(GeoPoint nextPoint) {
-        
+    public void centerMapAnimated() {
+        this.mapController.setCenterAnimated(this.getLastLocation());
+    }
+
+    public void setController(MapController mapController) {
+        this.mapController = mapController;
     }
 }
