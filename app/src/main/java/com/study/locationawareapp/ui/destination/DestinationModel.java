@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class DestinationModel {
     private ArrayList<String> pastDestinations;
+    private Destination currentDestination;
 
     public DestinationModel() {
         //todo get them from shared preferences
