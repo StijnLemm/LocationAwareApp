@@ -1,6 +1,8 @@
 package com.study.locationawareapp.ui.destination;
 
 
+import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import java.util.ArrayList;
@@ -11,8 +13,12 @@ public class DestinationViewModel extends ViewModel implements ListProvider{
 
     public DestinationViewModel() {
         this.destinationModel = new DestinationModel();
-    }
 
+        // Create the binding when something in the data is updated we get notified
+        this.destinationModel.getCurrentDestination().observe(this, (Observer<Destination>) destination -> {
+            //todo do something with the destination
+        });
+    }
 
     public int size() {
         return destinationModel.getPastDestinations().size();
@@ -20,6 +26,6 @@ public class DestinationViewModel extends ViewModel implements ListProvider{
 
     @Override
     public ArrayList<Destination> getList() {
-        return destinationModel.getPastDestinations();
+        return destinationModel.getPastDestinations().getValue();
     }
 }

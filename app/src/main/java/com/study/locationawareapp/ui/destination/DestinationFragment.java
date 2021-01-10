@@ -42,6 +42,8 @@ public class DestinationFragment extends Fragment {
             }
         });
 
+
+
         // Finding the views used in the current destination
         placeholderCurrent = root.findViewById(R.id.ConstraintLayout_destination_current);
         textCurrent = root.findViewById(R.id.TextView_destination_current);

@@ -23,7 +23,8 @@ public class DirectionsFragment extends Fragment {
         notificationsViewModel =
                 new ViewModelProvider(this).get(DirectionsViewModel.class);
         View root = inflater.inflate(R.layout.fragment_directions, container, false);
-        final TextView textView = root.findViewById(R.id.text_notifications);
+
+        final TextView textView = root.findViewById(R.id.TextView_directions);
         notificationsViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {

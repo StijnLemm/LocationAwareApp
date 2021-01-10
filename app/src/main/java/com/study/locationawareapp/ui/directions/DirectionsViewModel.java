@@ -10,7 +10,7 @@ public class DirectionsViewModel extends ViewModel {
 
     public DirectionsViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is notifications fragment");
+        mText.setValue("This is the directions fragment");
     }
 
     public LiveData<String> getText() {
