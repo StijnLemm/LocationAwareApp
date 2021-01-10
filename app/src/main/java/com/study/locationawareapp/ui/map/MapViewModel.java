@@ -23,7 +23,7 @@ public class MapViewModel extends ViewModel {
         mapView.setUseDataConnection(true);
 
         IMapController controller = mapView.getController();
-        controller.setZoom(15d);
+        controller.setZoom(18d);
 
         this.myLocationNewOverlay = new MyLocationNewOverlay(mapView);
         this.myLocationNewOverlay.enableMyLocation();
