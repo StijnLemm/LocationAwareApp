@@ -73,7 +73,7 @@ public class DestinationFragment extends Fragment {
             title.setText(destination.getName());
 
             TextView duration = placeholderCurrent.findViewById(R.id.TextView_destinationItem_duration);
-            duration.setText("" + destination.getDuration());
+            duration.setText("" + destination.getDurationInMinutes());
 
             TextView switches = placeholderCurrent.findViewById(R.id.TextView_destinationItem_switches);
             switches.setText("" + destination.getSwitches());

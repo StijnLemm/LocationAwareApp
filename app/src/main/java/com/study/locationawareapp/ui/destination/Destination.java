@@ -5,8 +5,15 @@ public class Destination {
     private double latitude;
     private double longitude;
     private double distance;
-    private double duration;
+    private int durationInMinutes;
     private int switches;
+
+    public Destination(String name, double latitude, double longitude) {
+        this.name = name;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.durationInMinutes = 100;
+    }
 
     public String getName() {
         return name;
@@ -40,12 +47,15 @@ public class Destination {
         this.distance = distance;
     }
 
-    public double getDuration() {
-        return duration;
+    public String getDurationInMinutes() {
+        int minutes = durationInMinutes % 60;
+        int hours = (durationInMinutes - minutes) / 60;
+
+        return hours + ":" + minutes;
     }
 
-    public void setDuration(double duration) {
-        this.duration = duration;
+    public void setDurationInMinutes(int durationInMinutes) {
+        this.durationInMinutes = durationInMinutes;
     }
 
     public int getSwitches() {
