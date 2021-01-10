@@ -39,6 +39,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         this.mapView = view.findViewById(R.id.MapView_Map);
         this.mapViewModel.setController(this);
         this.mapViewModel.initMapView(this.mapView);
