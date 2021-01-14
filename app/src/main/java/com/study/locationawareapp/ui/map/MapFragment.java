@@ -9,9 +9,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.study.locationawareapp.App;
 import com.study.locationawareapp.R;
+import com.study.locationawareapp.ui.AppViewModel;
 
 import org.osmdroid.config.Configuration;
 import org.osmdroid.library.BuildConfig;
@@ -22,6 +25,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
 
     private MapView mapView;
     private MapViewModel mapViewModel;
+    private AppViewModel appViewModel;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -31,8 +35,10 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        mapViewModel =
+        this.mapViewModel =
                 new ViewModelProvider(this).get(MapViewModel.class);
+        this.appViewModel =
+                new ViewModelProvider(this.getActivity()).get(AppViewModel.class);
         return inflater.inflate(R.layout.fragment_map, container, false);
     }
 

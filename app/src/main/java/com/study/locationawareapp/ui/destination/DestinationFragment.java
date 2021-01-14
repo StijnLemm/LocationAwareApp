@@ -15,17 +15,20 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.study.locationawareapp.R;
+import com.study.locationawareapp.ui.AppViewModel;
 
 public class DestinationFragment extends Fragment {
 
     private DestinationViewModel destinationViewModel;
     private ConstraintLayout placeholderCurrent;
+    private AppViewModel appViewModel;
     private TextView textCurrent;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         destinationViewModel = new ViewModelProvider(this).get(DestinationViewModel.class);
         View root = inflater.inflate(R.layout.fragment_destination, container, false);
+        this.appViewModel = new ViewModelProvider(this.getActivity()).get(AppViewModel.class);
         final RecyclerView recyclerView = root.findViewById(R.id.ListView_lastDestinations);
 
         //todo add binding to make suggestions and to set the current destination
