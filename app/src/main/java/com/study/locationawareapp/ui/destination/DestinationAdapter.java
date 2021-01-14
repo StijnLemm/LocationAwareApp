@@ -12,10 +12,12 @@ import com.study.locationawareapp.R;
 
 
 public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.ViewHolder> {
-    private ListProvider listProvider;
+    private final DestinationSetter destinationSetter;
+    private final ListProvider listProvider;
 
-    public DestinationAdapter(ListProvider listProvider) {
+    public DestinationAdapter(ListProvider listProvider,DestinationSetter destinationSetter) {
         this.listProvider = listProvider;
+        this.destinationSetter = destinationSetter;
     }
 
     @NonNull
@@ -34,6 +36,10 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
         holder.setTitle(destination.getName());
         holder.setDuration(""+destination.getDurationInMinutes());
         holder.setSwitches(""+destination.getSwitches());
+
+        holder.itemView.setOnClickListener(view -> {
+            destinationSetter.setDestination(destination);
+        });
     }
 
     @Override

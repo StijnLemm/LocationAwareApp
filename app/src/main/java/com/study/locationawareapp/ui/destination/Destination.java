@@ -1,5 +1,7 @@
 package com.study.locationawareapp.ui.destination;
 
+import org.json.JSONObject;
+
 public class Destination {
     private String name;
     private double latitude;

@@ -15,13 +15,19 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.study.locationawareapp.App;
 import com.study.locationawareapp.R;
 import com.study.locationawareapp.ui.AppViewModel;
+import com.study.locationawareapp.ui.POIsHolder;
+import com.study.locationawareapp.ui.destination.Destination;
 
 import org.osmdroid.config.Configuration;
 import org.osmdroid.library.BuildConfig;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 
-public class MapFragment extends Fragment implements View.OnClickListener, MapController {
+import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
+
+public class MapFragment extends Fragment implements View.OnClickListener, MapController, Observer {
 
     private MapView mapView;
     private MapViewModel mapViewModel;
@@ -39,6 +45,11 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
                 new ViewModelProvider(this).get(MapViewModel.class);
         this.appViewModel =
                 new ViewModelProvider(this.getActivity()).get(AppViewModel.class);
+
+        this.appViewModel.getPOIs(mapViewModel.getCurrentLocation());
+
+        appViewModel.subject.attachObserver(this);
+
         return inflater.inflate(R.layout.fragment_map, container, false);
     }
 
@@ -77,5 +88,10 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
     @Override
     public void onDestroy() {
         super.onDestroy();
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        //todo get the pois and use them
     }
 }

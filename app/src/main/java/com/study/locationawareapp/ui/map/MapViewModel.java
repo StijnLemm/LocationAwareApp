@@ -55,4 +55,8 @@ public class MapViewModel extends ViewModel {
     public void setController(MapController mapController) {
         this.mapController = mapController;
     }
+
+    public GeoPoint getCurrentLocation() {
+        return myLocationNewOverlay.getMyLocation();
+    }
 }
