@@ -18,16 +18,19 @@ import okhttp3.Response;
 import static com.study.locationawareapp.ui.CustomJSONParser.POIParser;
 
 public class APIModel {
+    private final POIsHolder poisHolder;
     private OkHttpClient client;
     private final String NS_BASE_URL = "https://gateway.apiportal.ns.nl/places-api/v2/";
 
     public APIModel(POIsHolder poisHolder) {
         this.client = new OkHttpClient();
-        getPOIs(51.588345851103284,4.7805184985037465);
+        this.poisHolder = poisHolder;
     }
 
     public void getPOIs(double latitude, double longitude) {
-        String url = NS_BASE_URL+"places?lat="+latitude+"&lng="+longitude+"&type=stationV2";
+        //TODO
+        int radiusInMeters = 20000;
+        String url = NS_BASE_URL+"places?lat="+latitude+"&lng="+longitude+"&radius="+radiusInMeters+"&type=stationV2";
 
         Request request = new Request.Builder()
                 .url(url)
@@ -49,7 +52,7 @@ public class APIModel {
                     String data = response.body().string();
                     Log.d("ORSAPI", " onResponse " + data);
                     ArrayList<Destination> destinations = POIParser(data);
-
+                    poisHolder.fillPOIs(destinations);
                 }
             }
         });
@@ -77,6 +80,8 @@ public class APIModel {
                 if (response.isSuccessful()) {
                     String data = response.body().string();
                     Log.d("ORSAPI", " onResponse " + data);
+                    ArrayList<Destination> destinations = POIParser(data);
+                    //poisHolder.fillPOIs(destinations);
                 }
             }
         });

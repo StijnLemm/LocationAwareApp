@@ -34,6 +34,9 @@ public class AppViewModel extends ViewModel implements DestinationSetter, ListPr
         return destinationModel.getCurrentDestination();
     }
 
+    public ArrayList<Destination> getLoadedPOIs() {
+        return pois;
+    }
 
     @Override
     public ArrayList<Destination> getList() {

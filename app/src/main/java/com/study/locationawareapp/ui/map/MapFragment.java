@@ -22,8 +22,10 @@ import org.osmdroid.config.Configuration;
 import org.osmdroid.library.BuildConfig;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Marker;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -46,8 +48,6 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
         this.appViewModel =
                 new ViewModelProvider(this.getActivity()).get(AppViewModel.class);
 
-        this.appViewModel.getPOIs(mapViewModel.getCurrentLocation());
-
         appViewModel.subject.attachObserver(this);
 
         return inflater.inflate(R.layout.fragment_map, container, false);
@@ -67,6 +67,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
 
     @Override
     public void setCenter(GeoPoint location) {
+        this.appViewModel.getPOIs(location);
         this.getActivity().runOnUiThread(() -> {
             this.mapView.getController().setCenter(location);
         });
@@ -75,8 +76,25 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
     @Override
     public void setCenterAnimated(GeoPoint location) {
         this.getActivity().runOnUiThread(() -> {
+            this.mapView.getController().zoomTo(18d);
             this.mapView.getController().animateTo(location);
         });
+    }
+
+    public void drawPOIs(List<Destination> pois){
+        if(this.getActivity() != null){
+            this.getActivity().runOnUiThread(() -> {
+                for(Destination destination : pois){
+                    GeoPoint point = new GeoPoint(destination.getLatitude(), destination.getLongitude());
+
+                    Marker marker = new Marker(mapView);
+                    marker.setTitle(destination.getName());
+                    marker.setPosition(point);
+                    mapView.getOverlays().add(marker);
+                }
+                mapView.invalidate();
+            });
+        }
     }
 
     //fab button click
@@ -93,5 +111,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
     @Override
     public void update(Observable o, Object arg) {
         //todo get the pois and use them
+        List<Destination> destinations = this.appViewModel.getLoadedPOIs();
+        drawPOIs(destinations);
     }
 }
