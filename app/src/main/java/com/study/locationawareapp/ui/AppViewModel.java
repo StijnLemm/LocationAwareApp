@@ -7,8 +7,9 @@ import com.study.locationawareapp.ui.api.APIModel;
 import com.study.locationawareapp.ui.destination.Destination;
 import com.study.locationawareapp.ui.destination.DestinationModel;
 import com.study.locationawareapp.ui.destination.DestinationSetter;
-import com.study.locationawareapp.ui.destination.ListProvider;
+import com.study.locationawareapp.ui.destination.DestinationListProvider;
 import com.study.locationawareapp.ui.directions.DirectionModel;
+import com.study.locationawareapp.ui.directions.DirectionsListProvider;
 import com.study.locationawareapp.ui.directions.Route;
 import com.study.locationawareapp.ui.directions.Step;
 
@@ -16,7 +17,7 @@ import org.osmdroid.util.GeoPoint;
 
 import java.util.ArrayList;
 
-public class AppViewModel extends ViewModel implements DestinationSetter, ListProvider, POIsHolder, RouteHolder {
+public class AppViewModel extends ViewModel implements DestinationSetter, DestinationListProvider, POIsHolder, RouteHolder, DirectionsListProvider {
     public Subject subject;
     private final DestinationModel destinationModel;
     private final DirectionModel directionModel;
@@ -45,7 +46,7 @@ public class AppViewModel extends ViewModel implements DestinationSetter, ListPr
     }
 
     @Override
-    public ArrayList<Destination> getList() {
+    public ArrayList<Destination> getDestinationList() {
         return destinationModel.getPastDestinations().getValue();
     }
 
@@ -74,4 +75,5 @@ public class AppViewModel extends ViewModel implements DestinationSetter, ListPr
     public ArrayList<Step> getRouteSteps() {
         return directionModel.getSteps();
     }
+
 }

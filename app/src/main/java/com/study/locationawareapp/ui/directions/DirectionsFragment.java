@@ -13,10 +13,12 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.study.locationawareapp.R;
 import com.study.locationawareapp.ui.AppViewModel;
+import com.study.locationawareapp.ui.destination.DestinationAdapter;
 
 public class DirectionsFragment extends Fragment {
 
@@ -29,6 +31,9 @@ public class DirectionsFragment extends Fragment {
         this.appViewModel = new ViewModelProvider(this.getActivity()).get(AppViewModel.class);
 
         final RecyclerView recyclerView = root.findViewById(R.id.RecyclerView_directions);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(new DirectionAdapter(appViewModel));
 
 
         return root;

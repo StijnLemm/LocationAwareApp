@@ -13,10 +13,10 @@ import com.study.locationawareapp.R;
 
 public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.ViewHolder> {
     private final DestinationSetter destinationSetter;
-    private final ListProvider listProvider;
+    private final DestinationListProvider destinationListProvider;
 
-    public DestinationAdapter(ListProvider listProvider,DestinationSetter destinationSetter) {
-        this.listProvider = listProvider;
+    public DestinationAdapter(DestinationListProvider destinationListProvider, DestinationSetter destinationSetter) {
+        this.destinationListProvider = destinationListProvider;
         this.destinationSetter = destinationSetter;
     }
 
@@ -31,7 +31,7 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Destination destination = listProvider.getList().get(position);
+        Destination destination = destinationListProvider.getDestinationList().get(position);
 
         holder.setTitle(destination.getName());
         holder.setDuration(""+destination.getDurationInMinutes());
@@ -44,7 +44,7 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
 
     @Override
     public int getItemCount() {
-        return listProvider.getList().size();
+        return destinationListProvider.getDestinationList().size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
