@@ -79,19 +79,18 @@ public class Route {
 
         if (listWasChanged) {
             // Remove all the points that were needed to be removed
-            coordinates.remove(removeables);
+            for (Integer i : removeables) {
+                coordinates.remove(i);
+            }
 
             // Loop through the steps and if we have visited all the point of that step we delete the step
-            Iterator iterator = steps.iterator();
-            while (iterator.hasNext()) {
-
-                Step step = (Step) iterator;
-
+            for (int i = steps.size()-1; i > 0; i--) {
+                Step step = steps.get(i);
                 if (step.getEndWayPoint() < firstPoint)
-                    iterator.remove();
-
-                iterator.next();
+                    steps.remove(i);
             }
+
+
         }
 
         // Return if there has changed anything in the list

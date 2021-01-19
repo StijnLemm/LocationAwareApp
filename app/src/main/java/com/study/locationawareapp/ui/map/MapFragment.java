@@ -33,12 +33,10 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import static android.content.ContentValues.TAG;
 
-public class MapFragment extends Fragment implements View.OnClickListener, MapController, Observer, RouteChangedListener {
+public class MapFragment extends Fragment implements View.OnClickListener, MapController, Observer {
 
     private static final String POI_KEY = "POI";
     private static final String SAVED_DOY_KEY = "DOY";
@@ -64,12 +62,12 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
 
         appViewModel.setLocationProvider(mapViewModel);
 
-        appViewModel.subject.attachObserver(this);
+        appViewModel.poiChangedSubject.attachObserver(this);
 
         this.pois = this.loadSavedPois();
         this.routeDrawing = new Polyline();
 
-        appViewModel.setRouteChangedListener(this);
+        appViewModel.routeChangedSubject.attachObserver(this);
 
         return inflater.inflate(R.layout.fragment_map, container, false);
     }
@@ -82,8 +80,6 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
         this.mapView = view.findViewById(R.id.MapView_Map);
         this.mapViewModel.setController(this);
         this.mapViewModel.initMapView(this.mapView);
-
-        drawRoute();
 
         FloatingActionButton fab = view.findViewById(R.id.Button_CenterMapButton);
         fab.setOnClickListener(this);
@@ -126,16 +122,19 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
     }
 
     public void drawRoute() {
-        mapView.getOverlayManager().remove(routeDrawing);
+        this.getActivity().runOnUiThread(() -> {
 
-        this.routeDrawing = new Polyline();
-        ArrayList<GeoPoint> coordinates = appViewModel.getRouteCoordinates();
+            mapView.getOverlayManager().remove(routeDrawing);
 
-        routeDrawing.setPoints(coordinates);
+            this.routeDrawing = new Polyline();
+            ArrayList<GeoPoint> coordinates = appViewModel.getRouteCoordinates();
 
-        mapView.getOverlayManager().add(routeDrawing);
+            routeDrawing.setPoints(coordinates);
 
-        mapView.invalidate();
+            mapView.getOverlayManager().add(routeDrawing);
+
+            mapView.invalidate();
+        });
 
         Log.d(TAG, "drawRoute: done drawing line");
     }
@@ -216,20 +215,19 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
 
     @Override
     public void update(Observable o, Object arg) {
-        List<Destination> destinations = this.appViewModel.getLoadedPOIs();
+        if (arg.equals(0)) {
+            List<Destination> destinations = this.appViewModel.getLoadedPOIs();
 
-        this.savePoisIfNeeded(destinations);
+            this.savePoisIfNeeded(destinations);
 
-        drawPOIs(destinations);
+            drawPOIs(destinations);
+        } else {
+            drawRoute();
+        }
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-    }
-
-    @Override
-    public void routeChanged() {
-        drawRoute();
     }
 }

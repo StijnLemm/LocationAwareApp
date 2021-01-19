@@ -3,6 +3,7 @@ package com.study.locationawareapp;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.android.material.tabs.TabLayout;
 import com.study.locationawareapp.ui.AppViewModel;
@@ -60,9 +61,11 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 try{
                     appViewModel.onLocationChanged(mapViewModel.getLastLocation());
-                } catch (Exception ignored){}
+                } catch (Exception e){
+                    Log.d("Timer", "run: location timer", e);
+                }
             }
-        },0, LISTENER_INTERVAL);
+        },LISTENER_INTERVAL, LISTENER_INTERVAL);
     }
 
     private void requestPermissionsIfNecessary(String[] strings) {

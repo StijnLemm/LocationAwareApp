@@ -5,10 +5,12 @@ import java.util.List;
 import java.util.Observer;
 
 public class Subject {
+    private final int arg;
     List<Observer> observers;
 
-    public Subject() {
+    public Subject(int arg) {
         this.observers = new ArrayList<>();
+        this.arg = arg;
     }
 
     public void attachObserver(Observer observer) {
@@ -22,7 +24,7 @@ public class Subject {
     public void notifyObservers() {
         for (Observer observer :
                 observers) {
-            observer.update(null, null);
+            observer.update(null, arg);
         }
     }
 }

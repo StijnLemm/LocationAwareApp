@@ -7,11 +7,11 @@ import com.study.locationawareapp.ui.Subject;
 
 import java.util.ArrayList;
 
-public class DestinationModel extends Subject {
+public class DestinationModel {
     private MutableLiveData<ArrayList<Destination>> pastDestinations;
     private MutableLiveData<Destination> currentDestination;
 
-    public DestinationModel() {
+    public DestinationModel(){
         // We made it mutable live data because the duration and switches are recieved at a later date
         this.pastDestinations = new MutableLiveData<>();
         this.pastDestinations.setValue(new ArrayList<>());

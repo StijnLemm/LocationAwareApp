@@ -21,7 +21,7 @@ import com.study.locationawareapp.ui.AppViewModel;
 import com.study.locationawareapp.ui.destination.DestinationAdapter;
 import com.study.locationawareapp.ui.map.MapViewModel;
 
-public class DirectionsFragment extends Fragment {
+public class DirectionsFragment extends Fragment{
 
     private AppViewModel appViewModel;
     private MapViewModel mapViewModel;
@@ -36,9 +36,11 @@ public class DirectionsFragment extends Fragment {
         final RecyclerView recyclerView = root.findViewById(R.id.RecyclerView_directions);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(new DirectionAdapter(appViewModel));
-
+        DirectionAdapter adapter = new DirectionAdapter(appViewModel);
+        recyclerView.setAdapter(adapter);
+        appViewModel.routeChangedSubject.attachObserver(adapter);
 
         return root;
     }
+
 }

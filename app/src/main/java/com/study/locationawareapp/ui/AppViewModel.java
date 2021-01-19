@@ -1,7 +1,5 @@
 package com.study.locationawareapp.ui;
 
-import android.util.Log;
-
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -15,30 +13,27 @@ import com.study.locationawareapp.ui.directions.DirectionsListProvider;
 import com.study.locationawareapp.ui.directions.Route;
 import com.study.locationawareapp.ui.directions.Step;
 import com.study.locationawareapp.ui.map.LocationProvider;
-import com.study.locationawareapp.ui.map.RouteChangedListener;
 
 import org.osmdroid.util.GeoPoint;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-
-import static android.content.ContentValues.TAG;
 
 public class AppViewModel extends ViewModel implements DestinationSetter, DestinationListProvider, POIsHolder, RouteHolder, DirectionsListProvider {
-    public Subject subject;
+    public Subject poiChangedSubject;
+    public Subject routeChangedSubject;
     private final DestinationModel destinationModel;
     private final DirectionModel directionModel;
     private final APIModel apiModel;
     private ArrayList<Destination> pois;
     private LocationProvider locationProvider;
-    private RouteChangedListener routeChangedListener;
 
     public AppViewModel() {
         this.apiModel = new APIModel(this, this);
         this.destinationModel = new DestinationModel();
         this.directionModel = new DirectionModel();
         this.pois = new ArrayList<>();
-        this.subject = new Subject();
+        this.poiChangedSubject = new Subject(0);
+        this.routeChangedSubject = new Subject(1);
     }
 
     @Override
@@ -68,14 +63,14 @@ public class AppViewModel extends ViewModel implements DestinationSetter, Destin
     @Override
     public void fillPOIs(ArrayList<Destination> pois) {
         this.pois = pois;
-        subject.notifyObservers();
+        poiChangedSubject.notifyObservers();
     }
 
 
     @Override
     public void setRoute(Route route) {
         directionModel.setRoute(route);
-        notifyRouteChanged();
+        routeChangedSubject.notifyObservers();
     }
 
     @Override
@@ -98,18 +93,13 @@ public class AppViewModel extends ViewModel implements DestinationSetter, Destin
     public void setLocationProvider(LocationProvider locationProvider) {
         this.locationProvider = locationProvider;
     }
+
     public void onLocationChanged(GeoPoint lastLocation) {
-        boolean changed = directionModel.getRoute().hasVisitedGeoPoint(lastLocation);
-        if (changed)
-            notifyRouteChanged();
+        if (directionModel.getRoute() != null) {
+            boolean changed = directionModel.getRoute().hasVisitedGeoPoint(lastLocation);
+            if (changed)
+                routeChangedSubject.notifyObservers();
+        }
     }
 
-    public void notifyRouteChanged(){
-        if (routeChangedListener!=null)
-            routeChangedListener.routeChanged();
-    }
-
-    public void setRouteChangedListener(RouteChangedListener routeChangedListener) {
-        this.routeChangedListener = routeChangedListener;
-    }
 }
