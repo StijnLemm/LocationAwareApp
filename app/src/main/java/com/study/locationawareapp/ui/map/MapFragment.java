@@ -1,12 +1,18 @@
 package com.study.locationawareapp.ui.map;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import androidx.annotation.ArrayRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
@@ -23,7 +29,9 @@ import org.osmdroid.library.BuildConfig;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.Polyline;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
@@ -81,10 +89,10 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
         });
     }
 
-    public void drawPOIs(List<Destination> pois){
-        if(this.getActivity() != null){
+    public void drawPOIs(List<Destination> pois) {
+        if (this.getActivity() != null) {
             this.getActivity().runOnUiThread(() -> {
-                for(Destination destination : pois){
+                for (Destination destination : pois) {
                     GeoPoint point = new GeoPoint(destination.getLatitude(), destination.getLongitude());
 
                     Marker marker = new Marker(mapView);
@@ -95,6 +103,26 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
                 mapView.invalidate();
             });
         }
+    }
+
+    public void drawRoute() {
+
+        getActivity().runOnUiThread(()->{
+            Toast.makeText(getContext(),"Now drawing route",Toast.LENGTH_SHORT).show();
+
+            Polyline polyline = new Polyline();
+            ArrayList<GeoPoint> coordinates = appViewModel.getRouteCoordinates();
+
+            polyline.setPoints(coordinates);
+
+            polyline.getOutlinePaint().setColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.design_default_color_primary));
+
+
+            mapView.getOverlayManager().add(polyline);
+            mapView.invalidate();
+
+            Toast.makeText(getContext(),"Done drawing route",Toast.LENGTH_LONG).show();
+        });
     }
 
     //fab button click
@@ -113,5 +141,6 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
         //todo get the pois and use them
         List<Destination> destinations = this.appViewModel.getLoadedPOIs();
         drawPOIs(destinations);
+        drawRoute();
     }
 }
