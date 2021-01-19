@@ -109,8 +109,6 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
 
     public void drawRoute() {
 
-        Log.d(TAG, "drawRoute: start drawing line");
-
         Polyline polyline = new Polyline();
         ArrayList<GeoPoint> coordinates = appViewModel.getRouteCoordinates();
 
