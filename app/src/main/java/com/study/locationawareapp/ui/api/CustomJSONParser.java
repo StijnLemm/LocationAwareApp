@@ -1,4 +1,4 @@
-package com.study.locationawareapp.ui;
+package com.study.locationawareapp.ui.api;
 
 import android.util.JsonReader;
 

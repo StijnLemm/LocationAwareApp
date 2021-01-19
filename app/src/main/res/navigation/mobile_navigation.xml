@@ -20,6 +20,6 @@
     <fragment
         android:id="@+id/navigation_directions"
         android:name="com.study.locationawareapp.ui.directions.DirectionsFragment"
-        android:label="@string/title_steps"
+        android:label="@string/title_directions"
         tools:layout="@layout/fragment_directions" />
 </navigation>
