@@ -3,18 +3,13 @@ package com.study.locationawareapp.ui.map;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import androidx.annotation.ArrayRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -31,10 +26,8 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polyline;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Observable;
@@ -52,6 +45,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
     private MapViewModel mapViewModel;
     private AppViewModel appViewModel;
     private List<Destination> pois;
+    private Polyline routeDrawing;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,10 +63,11 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
         appViewModel.subject.attachObserver(this);
 
         this.pois = this.loadSavedPois();
+        this.routeDrawing = new Polyline();
+
 
         return inflater.inflate(R.layout.fragment_map, container, false);
     }
-
 
 
     @Override
@@ -125,21 +120,23 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
     }
 
     public void drawRoute() {
+        mapView.getOverlayManager().remove(routeDrawing);
 
-        Polyline polyline = new Polyline();
+        this.routeDrawing = new Polyline();
         ArrayList<GeoPoint> coordinates = appViewModel.getRouteCoordinates();
 
-        polyline.setPoints(coordinates);
+        routeDrawing.setPoints(coordinates);
 
-        mapView.getOverlayManager().add(polyline);
+        mapView.getOverlayManager().add(routeDrawing);
 
         mapView.invalidate();
 
         Log.d(TAG, "drawRoute: done drawing line");
     }
 
-    private void loadPois(GeoPoint location){
-        if(this.pois.size() == 0){
+
+    private void loadPois(GeoPoint location) {
+        if (this.pois.size() == 0) {
             this.appViewModel.getPOIs(location);
         } else {
             drawPOIs(this.pois);
@@ -165,8 +162,8 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
         calendar.setTimeInMillis(System.currentTimeMillis());
         int dayOfYear = calendar.get(Calendar.DAY_OF_YEAR);
         int year = calendar.get(Calendar.YEAR);
-        if(Math.abs(dayOfYear - this.savedDate.get(Calendar.DAY_OF_YEAR)) > 0
-                || (year - this.savedDate.get(Calendar.YEAR)) > 0){
+        if (Math.abs(dayOfYear - this.savedDate.get(Calendar.DAY_OF_YEAR)) > 0
+                || (year - this.savedDate.get(Calendar.YEAR)) > 0) {
 
             SharedPreferences mPrefs = getActivity().getPreferences(Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = mPrefs.edit();
@@ -177,7 +174,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
 
             Set<String> destinationStrings = new HashSet<>();
 
-            for(Destination destination : destinations){
+            for (Destination destination : destinations) {
                 Gson gson = new Gson();
                 String destinationString = gson.toJson(destination);
                 destinationStrings.add(destinationString);
@@ -190,7 +187,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
         }
     }
 
-    public List<Destination> loadSavedPois(){
+    public List<Destination> loadSavedPois() {
         List<Destination> destinations = new ArrayList<>();
 
         SharedPreferences mPrefs = getActivity().getPreferences(Context.MODE_PRIVATE);
@@ -202,8 +199,8 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
         Gson gson = new Gson();
         Set<String> json = mPrefs.getStringSet(POI_KEY, null);
 
-        if(json != null){
-            for(String jsonDestination : json){
+        if (json != null) {
+            for (String jsonDestination : json) {
                 Destination destination = gson.fromJson(jsonDestination, Destination.class);
                 destinations.add(destination);
             }
@@ -218,6 +215,5 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
         this.savePoisIfNeeded(destinations);
 
         drawPOIs(destinations);
-        drawRoute();
     }
 }

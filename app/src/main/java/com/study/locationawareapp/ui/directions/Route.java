@@ -86,7 +86,7 @@ public class Route {
             while (iterator.hasNext()) {
 
                 Step step = (Step) iterator;
-                
+
                 if (step.getEndWayPoint() < firstPoint)
                     iterator.remove();
 
