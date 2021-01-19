@@ -12,10 +12,9 @@
         android:background="?android:attr/windowBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:tabSelectedTextColor="@color/design_default_color_primary" />
+        app:layout_constraintRight_toRightOf="parent" />
 
-    <androidx.viewpager.widget.ViewPager
+    <com.study.locationawareapp.ui.CustomViewPager
         android:id="@+id/ViewPager_main"
         android:layout_width="match_parent"
         android:layout_height="0dp"

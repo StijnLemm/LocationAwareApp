@@ -1,29 +1,19 @@
 package com.study.locationawareapp;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.view.MenuItem;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.study.locationawareapp.ui.AppViewModel;
-import com.study.locationawareapp.ui.destination.DestinationFragment;
-import com.study.locationawareapp.ui.directions.DirectionsFragment;
-import com.study.locationawareapp.ui.map.MapFragment;
+import com.study.locationawareapp.ui.CustomViewPager;
 import com.study.locationawareapp.ui.map.MapViewModel;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.NavigationUI;
 import androidx.viewpager.widget.ViewPager;
 
 import java.util.ArrayList;
@@ -44,7 +34,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
-        ViewPager viewPager = findViewById(R.id.ViewPager_main);
+        CustomViewPager viewPager = findViewById(R.id.ViewPager_main);
+        viewPager.disableScroll(true);
         viewPager.setAdapter(sectionsPagerAdapter);
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
