@@ -16,6 +16,7 @@ import com.study.locationawareapp.ui.directions.Step;
 import org.osmdroid.util.GeoPoint;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class AppViewModel extends ViewModel implements DestinationSetter, DestinationListProvider, POIsHolder, RouteHolder, DirectionsListProvider {
     public Subject subject;
@@ -25,7 +26,7 @@ public class AppViewModel extends ViewModel implements DestinationSetter, Destin
     private ArrayList<Destination> pois;
 
     public AppViewModel() {
-        this.apiModel = new APIModel(this,this);
+        this.apiModel = new APIModel(this, this);
         this.destinationModel = new DestinationModel();
         this.directionModel = new DirectionModel();
         this.pois = new ArrayList<>();
@@ -69,7 +70,14 @@ public class AppViewModel extends ViewModel implements DestinationSetter, Destin
 
     @Override
     public ArrayList<GeoPoint> getRouteCoordinates() {
-        return directionModel.getCoordinates();
+        ArrayList<GeoPoint> list = new ArrayList<>();
+
+        for (Integer i : directionModel.getCoordinates().keySet()) {
+            list.add(directionModel.getCoordinates().get(i));
+        }
+
+
+        return list;
     }
 
     @Override

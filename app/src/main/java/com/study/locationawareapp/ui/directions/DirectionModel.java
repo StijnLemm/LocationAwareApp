@@ -5,6 +5,7 @@ import com.study.locationawareapp.ui.api.CustomJSONParser;
 import org.osmdroid.util.GeoPoint;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class DirectionModel {
     private Route route;
@@ -19,9 +20,9 @@ public class DirectionModel {
         this.route = route;
     }
 
-    public ArrayList<GeoPoint> getCoordinates() {
+    public HashMap<Integer,GeoPoint> getCoordinates() {
         if (this.route.getCoordinates() == null)
-            return new ArrayList<>();
+            return new HashMap<>();
 
         return this.route.getCoordinates();
     }

@@ -160,7 +160,9 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
     private Calendar savedDate;
 
     private void savePoisIfNeeded(List<Destination> destinations) {
-        Calendar calendar = Calendar.getInstance();
+        //getting the current time in milliseconds, and creating a Date object from it:
+        Calendar calendar = Calendar.getInstance(); //or simply new Date();
+        calendar.setTimeInMillis(System.currentTimeMillis());
         int dayOfYear = calendar.get(Calendar.DAY_OF_YEAR);
         int year = calendar.get(Calendar.YEAR);
         if(Math.abs(dayOfYear - this.savedDate.get(Calendar.DAY_OF_YEAR)) > 0
