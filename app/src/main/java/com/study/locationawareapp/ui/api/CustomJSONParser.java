@@ -14,6 +14,7 @@ import org.osmdroid.util.GeoPoint;
 
 import java.lang.reflect.GenericArrayType;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class CustomJSONParser {
     public static ArrayList<Destination> POIParser(String data) {
@@ -44,7 +45,7 @@ public class CustomJSONParser {
     }
 
     public static Route RouteParser(String data) {
-        ArrayList<GeoPoint> coordinates = routeParserCoordinates(data);
+        HashMap<Integer,GeoPoint> coordinates = routeParserCoordinates(data);
         ArrayList<Step> steps = routeParserSteps(data);
         double distance = routeParserDistance(data);
         int duration = routeParserDuration(data);
@@ -92,8 +93,8 @@ public class CustomJSONParser {
         return duration;
     }
 
-    private static ArrayList<GeoPoint> routeParserCoordinates(String data) {
-        ArrayList<GeoPoint> coordinates = new ArrayList<>();
+    private static HashMap<Integer,GeoPoint> routeParserCoordinates(String data) {
+        HashMap<Integer,GeoPoint> coordinates = new HashMap<>();
 
         try {
             JSONObject jsonObject = new JSONObject(data);
@@ -109,7 +110,7 @@ public class CustomJSONParser {
                 double lat = location.getDouble(1);
 
                 GeoPoint geoPoint = new GeoPoint(lat, lng);
-                coordinates.add(geoPoint);
+                coordinates.put(i,geoPoint);
             }
 
         } catch (JSONException e) {
