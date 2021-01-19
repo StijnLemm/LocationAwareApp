@@ -72,7 +72,7 @@ public class APIModel {
 
         String url = constructUrlPostMethod(TravelProfile.walking);
 
-        String body = "{\"coordinates\":[[" + start.toDoubleString()+"],["+end.toDoubleString() + "]]}";
+        String body = "{\"coordinates\":[[" + start.getLongitude()+","+start.getLatitude()+"],["+end.getLongitude()+","+end.getLatitude() + "]]}";
 
         RequestBody requestBody = RequestBody.create(body, MediaType.parse("application/json; charset=utf-8"));
 
@@ -91,9 +91,9 @@ public class APIModel {
 
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                String data = response.body().string();
+                Log.d("ORS-API", " onResponse " + data);
                 if (response.isSuccessful()) {
-                    String data = response.body().string();
-                    Log.d("ORS-API", " onResponse " + data);
                     Route route = RouteParser(data);
                     routeHolder.setRoute(route);
                 }
@@ -106,7 +106,7 @@ public class APIModel {
         String result = ORS_BASE_URL;
 
         // Add profile
-        result += travelProfile.label + "?";
+        result += travelProfile.label + "/geojson?";
 
         // Add the api key
         result += "api_key=" + "5b3ce3597851110001cf62485b882f57ae2f4fc08dc8070ae9f59e79";

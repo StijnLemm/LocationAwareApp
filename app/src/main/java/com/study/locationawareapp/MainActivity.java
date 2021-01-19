@@ -8,6 +8,7 @@ import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.tabs.TabLayout;
+import com.study.locationawareapp.ui.AppViewModel;
 import com.study.locationawareapp.ui.destination.DestinationFragment;
 import com.study.locationawareapp.ui.directions.DirectionsFragment;
 import com.study.locationawareapp.ui.map.MapFragment;

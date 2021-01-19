@@ -35,4 +35,8 @@ public class DirectionModel {
 
         return this.route.getSteps();
     }
+
+    public Route getRoute() {
+        return route;
+    }
 }

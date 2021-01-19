@@ -38,7 +38,7 @@ import java.util.TimerTask;
 
 import static android.content.ContentValues.TAG;
 
-public class MapFragment extends Fragment implements View.OnClickListener, MapController, Observer {
+public class MapFragment extends Fragment implements View.OnClickListener, MapController, Observer, RouteChangedListener {
 
     private static final String POI_KEY = "POI";
     private static final String SAVED_DOY_KEY = "DOY";
@@ -68,6 +68,8 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
 
         this.pois = this.loadSavedPois();
         this.routeDrawing = new Polyline();
+
+        appViewModel.setRouteChangedListener(this);
 
         return inflater.inflate(R.layout.fragment_map, container, false);
     }
@@ -224,5 +226,10 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+    }
+
+    @Override
+    public void routeChanged() {
+        drawRoute();
     }
 }
