@@ -37,6 +37,8 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import static android.content.ContentValues.TAG;
+
 public class MapFragment extends Fragment implements View.OnClickListener, MapController, Observer {
 
     private MapView mapView;
@@ -107,8 +109,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
 
     public void drawRoute() {
 
-        getActivity().runOnUiThread(()->{
-            Toast.makeText(getContext(),"Now drawing route",Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "drawRoute: start drawing line");
 
             Polyline polyline = new Polyline();
             ArrayList<GeoPoint> coordinates = appViewModel.getRouteCoordinates();
@@ -117,12 +118,11 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
 
             polyline.getOutlinePaint().setColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.design_default_color_primary));
 
-
             mapView.getOverlayManager().add(polyline);
+
             mapView.invalidate();
 
-            Toast.makeText(getContext(),"Done drawing route",Toast.LENGTH_LONG).show();
-        });
+        Log.d(TAG, "drawRoute: done drawing line");
     }
 
     //fab button click
