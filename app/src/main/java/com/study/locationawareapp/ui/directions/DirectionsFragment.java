@@ -10,7 +10,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -21,10 +20,14 @@ import com.study.locationawareapp.ui.AppViewModel;
 import com.study.locationawareapp.ui.destination.DestinationAdapter;
 import com.study.locationawareapp.ui.map.MapViewModel;
 
-public class DirectionsFragment extends Fragment{
+import java.util.Observable;
+import java.util.Observer;
+
+public class DirectionsFragment extends Fragment implements Observer {
 
     private AppViewModel appViewModel;
     private MapViewModel mapViewModel;
+    private DirectionAdapter adapter;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -36,11 +39,15 @@ public class DirectionsFragment extends Fragment{
         final RecyclerView recyclerView = root.findViewById(R.id.RecyclerView_directions);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        DirectionAdapter adapter = new DirectionAdapter(appViewModel);
+        this.adapter = new DirectionAdapter(appViewModel);
         recyclerView.setAdapter(adapter);
-        appViewModel.routeChangedSubject.attachObserver(adapter);
+        appViewModel.routeChangedSubject.attachObserver(this);
 
         return root;
     }
 
+    @Override
+    public void update(Observable o, Object arg) {
+        getActivity().runOnUiThread(()-> this.adapter.notifyDataSetChanged());
+    }
 }

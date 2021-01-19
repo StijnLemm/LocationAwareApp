@@ -13,7 +13,7 @@ import com.study.locationawareapp.R;
 import java.util.Observable;
 import java.util.Observer;
 
-public class DirectionAdapter extends RecyclerView.Adapter<DirectionAdapter.ViewHolder> implements Observer {
+public class DirectionAdapter extends RecyclerView.Adapter<DirectionAdapter.ViewHolder> {
     private DirectionsListProvider directionsListProvider;
 
     public DirectionAdapter(DirectionsListProvider directionsListProvider) {
@@ -45,10 +45,6 @@ public class DirectionAdapter extends RecyclerView.Adapter<DirectionAdapter.View
         return directionsListProvider.getRouteSteps().size();
     }
 
-    @Override
-    public void update(Observable o, Object arg) {
-        notifyDataSetChanged();
-    }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
