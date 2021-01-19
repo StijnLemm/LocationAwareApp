@@ -1,5 +1,7 @@
 package com.study.locationawareapp.ui.directions;
 
+import androidx.lifecycle.LiveData;
+
 import com.study.locationawareapp.ui.api.CustomJSONParser;
 
 import org.osmdroid.util.GeoPoint;

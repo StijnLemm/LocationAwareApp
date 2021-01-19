@@ -12,6 +12,7 @@ import com.study.locationawareapp.ui.directions.DirectionModel;
 import com.study.locationawareapp.ui.directions.DirectionsListProvider;
 import com.study.locationawareapp.ui.directions.Route;
 import com.study.locationawareapp.ui.directions.Step;
+import com.study.locationawareapp.ui.map.LocationProvider;
 
 import org.osmdroid.util.GeoPoint;
 
@@ -24,6 +25,7 @@ public class AppViewModel extends ViewModel implements DestinationSetter, Destin
     private final DirectionModel directionModel;
     private final APIModel apiModel;
     private ArrayList<Destination> pois;
+    private LocationProvider locationProvider;
 
     public AppViewModel() {
         this.apiModel = new APIModel(this, this);
@@ -36,6 +38,7 @@ public class AppViewModel extends ViewModel implements DestinationSetter, Destin
     @Override
     public void setDestination(Destination destination) {
         destinationModel.setCurrentDestination(destination);
+        apiModel.getRoute(locationProvider.getLastLocation(), destination.getGeoPoint());
     }
 
     public MutableLiveData<Destination> getDestination() {
@@ -85,4 +88,7 @@ public class AppViewModel extends ViewModel implements DestinationSetter, Destin
         return directionModel.getSteps();
     }
 
+    public void setLocationProvider(LocationProvider locationProvider) {
+        this.locationProvider = locationProvider;
+    }
 }

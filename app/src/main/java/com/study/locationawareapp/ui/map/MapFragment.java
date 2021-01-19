@@ -60,11 +60,12 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
         this.appViewModel =
                 new ViewModelProvider(this.getActivity()).get(AppViewModel.class);
 
+        appViewModel.setLocationProvider(mapViewModel);
+
         appViewModel.subject.attachObserver(this);
 
         this.pois = this.loadSavedPois();
         this.routeDrawing = new Polyline();
-
 
         return inflater.inflate(R.layout.fragment_map, container, false);
     }
@@ -77,6 +78,8 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
         this.mapView = view.findViewById(R.id.MapView_Map);
         this.mapViewModel.setController(this);
         this.mapViewModel.initMapView(this.mapView);
+
+        drawRoute();
 
         FloatingActionButton fab = view.findViewById(R.id.Button_CenterMapButton);
         fab.setOnClickListener(this);

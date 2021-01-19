@@ -6,14 +6,12 @@ import com.study.locationawareapp.ui.POIsHolder;
 import com.study.locationawareapp.ui.RouteHolder;
 import com.study.locationawareapp.ui.destination.Destination;
 import com.study.locationawareapp.ui.directions.Route;
-import com.study.locationawareapp.ui.directions.Step;
 
 import org.jetbrains.annotations.NotNull;
 import org.osmdroid.util.GeoPoint;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;

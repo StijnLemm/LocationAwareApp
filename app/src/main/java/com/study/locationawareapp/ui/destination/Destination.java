@@ -1,6 +1,7 @@
 package com.study.locationawareapp.ui.destination;
 
 import org.json.JSONObject;
+import org.osmdroid.util.GeoPoint;
 
 public class Destination {
     private String name;
@@ -66,5 +67,9 @@ public class Destination {
 
     public void setSwitches(int switches) {
         this.switches = switches;
+    }
+
+    public GeoPoint getGeoPoint() {
+        return new GeoPoint(latitude,longitude);
     }
 }

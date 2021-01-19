@@ -10,13 +10,10 @@ import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
-public class MapViewModel extends ViewModel {
+public class MapViewModel extends ViewModel implements LocationProvider{
 
     private MyLocationNewOverlay myLocationNewOverlay;
     private MapController mapController;
-
-    public MapViewModel() {
-    }
 
     public void initMapView(MapView mapView){
         mapView.setTileSource(TileSourceFactory.MAPNIK);
@@ -40,7 +37,7 @@ public class MapViewModel extends ViewModel {
         this.myLocationNewOverlay.runOnFirstFix(this::centerMap);
     }
 
-    private GeoPoint getLastLocation(){
+    public GeoPoint getLastLocation(){
         return this.myLocationNewOverlay.getMyLocation();
     }
 
