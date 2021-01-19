@@ -19,16 +19,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.study.locationawareapp.R;
 import com.study.locationawareapp.ui.AppViewModel;
 import com.study.locationawareapp.ui.destination.DestinationAdapter;
+import com.study.locationawareapp.ui.map.MapViewModel;
 
 public class DirectionsFragment extends Fragment {
 
     private AppViewModel appViewModel;
+    private MapViewModel mapViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_directions, container, false);
 
         this.appViewModel = new ViewModelProvider(this.getActivity()).get(AppViewModel.class);
+        this.mapViewModel = new ViewModelProvider(this.getActivity()).get(MapViewModel.class);
 
         final RecyclerView recyclerView = root.findViewById(R.id.RecyclerView_directions);
 
