@@ -111,16 +111,14 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
 
         Log.d(TAG, "drawRoute: start drawing line");
 
-            Polyline polyline = new Polyline();
-            ArrayList<GeoPoint> coordinates = appViewModel.getRouteCoordinates();
+        Polyline polyline = new Polyline();
+        ArrayList<GeoPoint> coordinates = appViewModel.getRouteCoordinates();
 
-            polyline.setPoints(coordinates);
+        polyline.setPoints(coordinates);
 
-            polyline.getOutlinePaint().setColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.design_default_color_primary));
+        mapView.getOverlayManager().add(polyline);
 
-            mapView.getOverlayManager().add(polyline);
-
-            mapView.invalidate();
+        mapView.invalidate();
 
         Log.d(TAG, "drawRoute: done drawing line");
     }
