@@ -50,6 +50,7 @@ public class AppViewModel extends ViewModel implements DestinationSetter, ListPr
     }
 
     public void getPOIs(GeoPoint geoPoint) {
+
         apiModel.getPOIs(geoPoint.getLatitude(), geoPoint.getLongitude());
     }
 
