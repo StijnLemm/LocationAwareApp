@@ -98,7 +98,6 @@ public class APIModel {
                     Log.d("ORS-API", " onResponse " + data);
                     Route route = RouteParser(data);
                     routeHolder.setRoute(route);
-                    //todo do something with the route
                 }
             }
         });

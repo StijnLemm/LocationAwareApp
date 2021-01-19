@@ -27,7 +27,7 @@ public class DestinationFragment extends Fragment implements DestinationSetter {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_destination, container, false);
         this.appViewModel = new ViewModelProvider(this.getActivity()).get(AppViewModel.class);
-        final RecyclerView recyclerView = root.findViewById(R.id.ListView_lastDestinations);
+        final RecyclerView recyclerView = root.findViewById(R.id.RecyclerView_lastDestinations);
 
         //todo search field
         final SearchView searchView = root.findViewById(R.id.SearchView_destination);

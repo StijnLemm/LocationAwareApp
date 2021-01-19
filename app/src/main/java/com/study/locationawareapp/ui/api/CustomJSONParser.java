@@ -105,8 +105,8 @@ public class CustomJSONParser {
             for (int i = 0; i < coordinatesJson.length(); i++) {
                 JSONArray location = coordinatesJson.getJSONArray(i);
 
-                double lat = location.getDouble(0);
-                double lng = location.getDouble(1);
+                double lng = location.getDouble(0);
+                double lat = location.getDouble(1);
 
                 GeoPoint geoPoint = new GeoPoint(lat, lng);
                 coordinates.add(geoPoint);

@@ -3,12 +3,18 @@ package com.study.locationawareapp.ui.map;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import androidx.annotation.ArrayRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -23,7 +29,9 @@ import org.osmdroid.library.BuildConfig;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.Polyline;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -32,6 +40,8 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
+
+import static android.content.ContentValues.TAG;
 
 public class MapFragment extends Fragment implements View.OnClickListener, MapController, Observer {
 
@@ -98,10 +108,10 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
         });
     }
 
-    public void drawPOIs(List<Destination> pois){
-        if(this.getActivity() != null){
+    public void drawPOIs(List<Destination> pois) {
+        if (this.getActivity() != null) {
             this.getActivity().runOnUiThread(() -> {
-                for(Destination destination : pois){
+                for (Destination destination : pois) {
                     GeoPoint point = new GeoPoint(destination.getLatitude(), destination.getLongitude());
 
                     Marker marker = new Marker(mapView);
@@ -112,6 +122,22 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
                 mapView.invalidate();
             });
         }
+    }
+
+    public void drawRoute() {
+
+        Log.d(TAG, "drawRoute: start drawing line");
+
+        Polyline polyline = new Polyline();
+        ArrayList<GeoPoint> coordinates = appViewModel.getRouteCoordinates();
+
+        polyline.setPoints(coordinates);
+
+        mapView.getOverlayManager().add(polyline);
+
+        mapView.invalidate();
+
+        Log.d(TAG, "drawRoute: done drawing line");
     }
 
     private void loadPois(GeoPoint location){
@@ -194,5 +220,6 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
         this.savePoisIfNeeded(destinations);
 
         drawPOIs(destinations);
+        drawRoute();
     }
 }

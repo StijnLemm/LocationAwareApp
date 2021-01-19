@@ -18,4 +18,44 @@ public class Step {
         this.startWayPoint = startWayPoint;
         this.endWayPoint = endWayPoint;
     }
+
+    public double getDistance() {
+        return distance;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public String getInstruction() {
+        return instruction;
+    }
+
+    public String getStreetName() {
+        return streetName;
+    }
+
+    public int getStartWayPoint() {
+        return startWayPoint;
+    }
+
+    public int getEndWayPoint() {
+        return endWayPoint;
+    }
+
+    public String getDurationInFormat() {
+        int minutes = duration % 60;
+        int hours = (duration - minutes) / 60;
+
+        return hours + ":" + minutes;
+    }
+
+    public String getDistanceInKM() {
+        String distance = String.format("%.2f", this.distance / 1000.0);
+        return distance;
+    }
 }
