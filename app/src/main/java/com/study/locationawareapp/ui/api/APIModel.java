@@ -3,31 +3,40 @@ package com.study.locationawareapp.ui.api;
 import android.util.Log;
 
 import com.study.locationawareapp.ui.POIsHolder;
+import com.study.locationawareapp.ui.RouteHolder;
 import com.study.locationawareapp.ui.destination.Destination;
+import com.study.locationawareapp.ui.directions.Route;
+import com.study.locationawareapp.ui.directions.Step;
 
 import org.jetbrains.annotations.NotNull;
 import org.osmdroid.util.GeoPoint;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static com.study.locationawareapp.ui.api.CustomJSONParser.POIParser;
+import static com.study.locationawareapp.ui.api.CustomJSONParser.RouteParser;
 
 public class APIModel {
     private final POIsHolder poisHolder;
+    private final RouteHolder routeHolder;
     private OkHttpClient client;
     private final String NS_BASE_URL = "https://gateway.apiportal.ns.nl/places-api/v2/";
     private final String ORS_BASE_URL = "https://api.openrouteservice.org/v2/directions/";
 
-    public APIModel(POIsHolder poisHolder) {
+    public APIModel(POIsHolder poisHolder, RouteHolder routeHolder) {
         this.client = new OkHttpClient();
         this.poisHolder = poisHolder;
+        this.routeHolder = routeHolder;
     }
 
     public void getPOIs(double latitude, double longitude) {
@@ -61,13 +70,17 @@ public class APIModel {
         });
     }
 
-    public void getRoute(GeoPoint start, GeoPoint end) {
+    public void getRoute(GeoPoint start,GeoPoint end) {
 
-        String url = constructUrlPostMethod(TravelProfile.walking, start, end);
+        String url = constructUrlPostMethod(TravelProfile.walking);
+
+        String body = "{\"coordinates\":[[" + start.toDoubleString()+"],["+end.toDoubleString() + "]]}";
+
+        RequestBody requestBody = RequestBody.create(body, MediaType.parse("application/json; charset=utf-8"));
 
         Request request = new Request.Builder()
                 .url(url)
-                .get()
+                .post(requestBody)
                 .build();
 
         Call call = client.newCall(request);
@@ -83,13 +96,15 @@ public class APIModel {
                 if (response.isSuccessful()) {
                     String data = response.body().string();
                     Log.d("ORS-API", " onResponse " + data);
+                    Route route = RouteParser(data);
+                    routeHolder.setRoute(route);
                     //todo do something with the route
                 }
             }
         });
     }
 
-    private String constructUrlPostMethod(TravelProfile travelProfile, GeoPoint start, GeoPoint end) {
+    private String constructUrlPostMethod(TravelProfile travelProfile) {
         // Get the base url
         String result = ORS_BASE_URL;
 
@@ -98,12 +113,6 @@ public class APIModel {
 
         // Add the api key
         result += "api_key=" + "5b3ce3597851110001cf62485b882f57ae2f4fc08dc8070ae9f59e79";
-
-        // Add the starting position
-        result += "&start=" + start.getLatitude() + "," + start.getLongitude();
-
-        // Add the ending position
-        result += "&end=" + end.getLatitude() + "," + end.getLongitude();
 
         return result;
     }
