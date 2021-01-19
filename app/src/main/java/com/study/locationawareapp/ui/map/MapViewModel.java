@@ -25,6 +25,7 @@ public class MapViewModel extends ViewModel implements LocationProvider{
         this.myLocationNewOverlay = new MyLocationNewOverlay(mapView);
         this.myLocationNewOverlay.enableMyLocation();
         this.myLocationNewOverlay.setDrawAccuracyEnabled(true);
+        this.myLocationNewOverlay.runOnFirstFix(this::centerMap);
 
         RotationGestureOverlay rotationGestureOverlay = new RotationGestureOverlay(mapView);
         rotationGestureOverlay.setEnabled(true);
@@ -34,7 +35,6 @@ public class MapViewModel extends ViewModel implements LocationProvider{
         mapView.getOverlays().add(this.myLocationNewOverlay);
 
         mapView.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.NEVER);
-        this.myLocationNewOverlay.runOnFirstFix(this::centerMap);
     }
 
     public GeoPoint getLastLocation(){
@@ -51,9 +51,5 @@ public class MapViewModel extends ViewModel implements LocationProvider{
 
     public void setController(MapController mapController) {
         this.mapController = mapController;
-    }
-
-    public GeoPoint getCurrentLocation() {
-        return myLocationNewOverlay.getMyLocation();
     }
 }

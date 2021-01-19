@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static android.content.ContentValues.TAG;
 
@@ -56,7 +58,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         this.mapViewModel =
-                new ViewModelProvider(this).get(MapViewModel.class);
+                new ViewModelProvider(this.getActivity()).get(MapViewModel.class);
         this.appViewModel =
                 new ViewModelProvider(this.getActivity()).get(AppViewModel.class);
 
@@ -90,7 +92,6 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
      */
     @Override
     public void setCenter(GeoPoint location) {
-
         this.loadPois(location);
 
         this.getActivity().runOnUiThread(() -> {
@@ -218,5 +219,10 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
         this.savePoisIfNeeded(destinations);
 
         drawPOIs(destinations);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
     }
 }
