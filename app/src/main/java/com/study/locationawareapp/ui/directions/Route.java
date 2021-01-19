@@ -4,6 +4,7 @@ import org.osmdroid.util.GeoPoint;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Set;
 
 public class Route {
@@ -42,19 +43,58 @@ public class Route {
      * @return true if list changed
      */
     public boolean hasVisitedGeoPoint(GeoPoint currentLocation) {
-        boolean hasVisited = false;
+        // Boolean to know if the list has been altered
+        boolean listWasChanged = false;
 
+        // All the keys available
         Set<Integer> keys = coordinates.keySet();
-//        keys.removeIf(key -> {
-//            if (coordinates.get(keys.).distanceToAsDouble(currentLocation) < 10) {
-//                hasVisited = true;
-//                return true;
-//            }
-//        });
+        // List of all the keys that will be removed
+        ArrayList<Integer> removeables = new ArrayList<>();
 
+        // Check if the size is bigger then 0 else we don't do anything
+        if (keys.size() < 1)
+            return false;
 
+        // Keep the first digit so we know if we skipped a part of the route we can delete that part
+        int firstPoint = (Integer) keys.toArray()[0];
 
+        // Loop through all the keys
+        for (Integer i : keys) {
+            // If the distance is smaller then 10 meter between the current location and the geolocation
+            if (coordinates.get(i).distanceToAsDouble(currentLocation) < 10) {
+                // We set the boolean that something has changed
+                listWasChanged = true;
 
-        return hasVisited;
+                // Add the key to the removables
+                removeables.add(i);
+                // Check if the key is later then the start point of the route
+                if (i > firstPoint)
+                    // Remove all the point before the point we have visited
+                    while (firstPoint < i) {
+                        removeables.add(firstPoint);
+                        firstPoint++;
+                    }
+            }
+        }
+
+        if (listWasChanged) {
+            // Remove all the points that were needed to be removed
+            coordinates.remove(removeables);
+
+            // Loop through the steps and if we have visited all the point of that step we delete the step
+            Iterator iterator = steps.iterator();
+            while (iterator.hasNext()) {
+
+                Step step = (Step) iterator;
+                
+                if (step.getEndWayPoint() < firstPoint)
+                    iterator.remove();
+
+                iterator.next();
+            }
+        }
+
+        // Return if there has changed anything in the list
+        return listWasChanged;
     }
 }
