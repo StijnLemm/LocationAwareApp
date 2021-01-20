@@ -96,9 +96,14 @@ public class AppViewModel extends ViewModel implements DestinationSetter, Destin
 
     public void onLocationChanged(GeoPoint lastLocation) {
         if (directionModel.getRoute() != null) {
-            boolean changed = directionModel.getRoute().hasVisitedGeoPoint(lastLocation);
-            if (changed)
+            boolean routeChanged = directionModel.getRoute().hasVisitedGeoPoint(lastLocation);
+            if (routeChanged)
                 routeChangedSubject.notifyObservers();
+
+            double distanceToClosestCoordinate = directionModel.getRoute().distanceToClosestCoordinte(lastLocation);
+            boolean farFromRoute = distanceToClosestCoordinate > 25;
+            if (farFromRoute)
+                setDestination(getDestination().getValue());
         }
     }
 

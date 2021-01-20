@@ -221,7 +221,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
             this.savePoisIfNeeded(destinations);
 
             drawPOIs(destinations);
-        } else {
+        } else if (arg.equals(1)) {
             drawRoute();
         }
     }

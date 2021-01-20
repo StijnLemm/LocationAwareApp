@@ -84,7 +84,7 @@ public class Route {
             }
 
             // Loop through the steps and if we have visited all the point of that step we delete the step
-            for (int i = steps.size()-1; i > 0; i--) {
+            for (int i = steps.size() - 1; i > 0; i--) {
                 Step step = steps.get(i);
                 if (step.getEndWayPoint() < firstPoint)
                     steps.remove(i);
@@ -95,5 +95,19 @@ public class Route {
 
         // Return if there has changed anything in the list
         return listWasChanged;
+    }
+
+    public double distanceToClosestCoordinte(GeoPoint lastLocation) {
+        double minimalDistance = Double.MAX_VALUE;
+
+        Set<Integer> keys = coordinates.keySet();
+
+        for (int key : keys) {
+            double distance = coordinates.get(key).distanceToAsDouble(lastLocation);
+            if (distance<minimalDistance)
+                minimalDistance = distance;
+        }
+
+        return minimalDistance;
     }
 }
