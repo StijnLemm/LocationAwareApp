@@ -37,8 +37,6 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
         Destination destination = previousDestinationsListProvider.getPreviousPOIsList().get(position);
 
         holder.setTitle(destination.getName());
-        holder.setDuration("" + destination.getDurationInMinutes());
-        holder.setSwitches("" + destination.getSwitches());
 
         holder.itemView.setOnClickListener(view -> {
             destinationSetter.setDestination(destination);
@@ -58,27 +56,15 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         private TextView title;
-        private TextView duration;
-        private TextView switches;
 
 
         public void setTitle(String title) {
             this.title.setText(title);
         }
 
-        public void setDuration(String duration) {
-            this.duration.setText(duration);
-        }
-
-        public void setSwitches(String switches) {
-            this.switches.setText(switches);
-        }
-
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             this.title = itemView.findViewById(R.id.TextView_destinationItem_title);
-            this.duration = itemView.findViewById(R.id.TextView_destinationItem_duration);
-            this.switches = itemView.findViewById(R.id.TextView_destinationItem_switches);
         }
     }
 }

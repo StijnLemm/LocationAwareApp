@@ -1,10 +1,16 @@
 package com.study.locationawareapp.ui.destination;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -13,6 +19,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
+import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -25,11 +32,12 @@ import com.study.locationawareapp.ui.api.TravelProfile;
 
 import static android.content.ContentValues.TAG;
 
-public class DestinationFragment extends Fragment implements DestinationSetter {
+public class DestinationFragment extends Fragment implements DestinationSetter, CurrentDestinationHolder {
 
     private ConstraintLayout placeholderCurrent;
     private AppViewModel appViewModel;
     private TextView textCurrent;
+    private WebView webView;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_destination, container, false);
@@ -100,6 +108,8 @@ public class DestinationFragment extends Fragment implements DestinationSetter {
             }
         });
 
+
+
         //Creating the ArrayAdapter instance having the possible travel profiles
         ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, travelProfiles);
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -108,16 +118,35 @@ public class DestinationFragment extends Fragment implements DestinationSetter {
 
         // If the destination changes in the model we set the destination in the ui
         appViewModel.getDestination().observe(getViewLifecycleOwner(), this::setDestination);
+        appViewModel.setCurrentDestinationHolder(this);
 
         // Finding the views used in the current destination
         placeholderCurrent = root.findViewById(R.id.ConstraintLayout_destination_current);
+        this.placeholderCurrent.setOnClickListener(this::getNSWebView);
         textCurrent = root.findViewById(R.id.TextView_destination_current);
+
         // Inflate the current into the constraint layout
         getLayoutInflater().inflate(R.layout.item_destination, placeholderCurrent);
         // Update to the current set destination
         setDestination(appViewModel.getDestination().getValue());
 
         return root;
+    }
+
+    private String currentURLContent;
+
+    public void getNSWebView(View view){
+        if(currentURLContent != null){
+            CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+            builder.setToolbarColor(getResources().getColor(R.color.blue));
+            CustomTabsIntent customTabsIntent = builder.build();
+            customTabsIntent.launchUrl(this.getContext(), Uri.parse(this.currentURLContent));
+        }
+    }
+
+    @Override
+    public void setURLContent(String url) {
+        this.currentURLContent = url;
     }
 
     /***
@@ -135,12 +164,6 @@ public class DestinationFragment extends Fragment implements DestinationSetter {
             //fill all the fields
             TextView title = placeholderCurrent.findViewById(R.id.TextView_destinationItem_title);
             title.setText(destination.getName());
-
-            TextView duration = placeholderCurrent.findViewById(R.id.TextView_destinationItem_duration);
-            duration.setText("" + destination.getDurationInMinutes());
-
-            TextView switches = placeholderCurrent.findViewById(R.id.TextView_destinationItem_switches);
-            switches.setText("" + destination.getSwitches());
         }
     }
 
