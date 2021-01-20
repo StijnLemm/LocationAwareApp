@@ -46,8 +46,7 @@ public class APIModel {
     }
 
     public void getPOIs(double latitude, double longitude) {
-        //int radiusInMeters = 100000;
-        String url = NS_BASE_URL + "places?type=stationV2&limit=400";
+        String url = NS_BASE_URL + "places?type=stationV2";
 
         Request request = new Request.Builder()
                 .url(url)
@@ -76,15 +75,14 @@ public class APIModel {
     }
 
     public void getNSInformation(String fromStation, String toStation){
-        String url = constructUrlPostMethod(travelProfile);
 
         String body = "?fromStation=" + fromStation + "&toStation=" + toStation;
-
-        RequestBody requestBody = RequestBody.create(body, MediaType.parse("application/json; charset=utf-8"));
+        String url = NS_BASE_URL_INFO + body;
 
         Request request = new Request.Builder()
                 .url(url)
-                .post(requestBody)
+                .addHeader("Ocp-Apim-Subscription-Key", "cb9a2ac92d124191b4216388587db953")
+                .get()
                 .build();
 
         Call call = client.newCall(request);

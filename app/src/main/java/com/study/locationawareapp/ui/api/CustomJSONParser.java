@@ -82,8 +82,9 @@ public class CustomJSONParser {
         try {
             JSONObject jsonObject = new JSONObject(data);
             JSONArray jsonArray = jsonObject.getJSONArray("trips");
-            JSONObject shareURl = jsonArray.getJSONObject(0);
-            url = shareURl.getString("uri");
+            JSONObject trip = jsonArray.getJSONObject(0);
+            JSONObject shareURL = trip.getJSONObject("shareUrl");
+            url = shareURL.getString("uri");
         } catch (JSONException e) {
             e.printStackTrace();
         }

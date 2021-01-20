@@ -55,6 +55,7 @@ public class AppViewModel extends ViewModel implements DestinationSetter, Destin
     public void setDestination(Destination destination) {
         destinationModel.setCurrentDestination(destination);
         apiModel.getRoute(locationProvider.getLastLocation(), destination.getGeoPoint());
+        apiModel.getNSInformation("breda", destination.getName());
     }
 
     public void setTrainRouteView(TrainRouteView trainRouteView) {

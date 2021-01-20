@@ -48,6 +48,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
     private List<Destination> pois;
     private Polyline routeDrawing;
     private Polyline trainRouteDrawing;
+    private Polyline trainDrawing;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -68,6 +69,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
 
         this.pois = this.loadSavedPois();
         this.routeDrawing = new Polyline();
+        this.trainDrawing = new Polyline();
 
         appViewModel.routeChangedSubject.attachObserver(this);
 
@@ -133,8 +135,10 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
     public void drawTrainRoute(Polyline polyline) {
         this.getActivity().runOnUiThread(() -> {
             //TODO stippeltjes/streepjes :)
+            mapView.getOverlayManager().remove(this.trainDrawing);
             mapView.getOverlayManager().add(polyline);
             mapView.invalidate();
+            this.trainDrawing = polyline;
         });
     }
 
