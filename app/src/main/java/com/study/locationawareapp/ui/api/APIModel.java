@@ -27,7 +27,6 @@ import static com.study.locationawareapp.ui.api.CustomJSONParser.GetURLFromNSMes
 import static com.study.locationawareapp.ui.api.CustomJSONParser.NSRouteParser;
 import static com.study.locationawareapp.ui.api.CustomJSONParser.POIParser;
 import static com.study.locationawareapp.ui.api.CustomJSONParser.RouteParser;
-import static com.study.locationawareapp.ui.api.CustomJSONParser.StationParser;
 
 public class APIModel {
     private final POIsHolder poisHolder;
