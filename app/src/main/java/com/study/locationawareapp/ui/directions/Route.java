@@ -49,7 +49,7 @@ public class Route {
         // All the keys available
         Set<Integer> keys = coordinates.keySet();
         // List of all the keys that will be removed
-        ArrayList<Integer> removeables = new ArrayList<>();
+        ArrayList<Integer> removables = new ArrayList<>();
 
         // Check if the size is bigger then 0 else we don't do anything
         if (keys.size() < 1)
@@ -58,28 +58,25 @@ public class Route {
         // Keep the first digit so we know if we skipped a part of the route we can delete that part
         int firstPoint = (Integer) keys.toArray()[0];
 
-        // Loop through all the keys
-        for (Integer i : keys) {
-            // If the distance is smaller then 10 meter between the current location and the geolocation
-            if (coordinates.get(i).distanceToAsDouble(currentLocation) < 10) {
-                // We set the boolean that something has changed
-                listWasChanged = true;
+        // Get closest coordinate
+        GeoPoint closestCoordinate = getClosestCoordinate(currentLocation);
 
-                // Add the key to the removables
-                removeables.add(i);
-                // Check if the key is later then the start point of the route
-                if (i > firstPoint)
-                    // Remove all the point before the point we have visited
-                    while (firstPoint < i) {
-                        removeables.add(firstPoint);
-                        firstPoint++;
-                    }
+        // If the distance is smaller then 10 meter between the current location and the geolocation
+        if (!closestCoordinate.equals(coordinates.get(firstPoint))) {
+            // We set the boolean that something has changed
+            listWasChanged = true;
+
+            // Remove all the point before the point we have visited
+            while (!closestCoordinate.equals(coordinates.get(firstPoint))) {
+                removables.add(firstPoint);
+                firstPoint++;
             }
         }
 
+
         if (listWasChanged) {
             // Remove all the points that were needed to be removed
-            for (Integer i : removeables) {
+            for (Integer i : removables) {
                 coordinates.remove(i);
             }
 
@@ -97,14 +94,33 @@ public class Route {
         return listWasChanged;
     }
 
-    public double distanceToClosestCoordinte(GeoPoint lastLocation) {
+    private GeoPoint getClosestCoordinate(GeoPoint currentLocation) {
+        double minimalDistance = Double.MAX_VALUE;
+
+        // Avoid null pointer if no coordinates are found
+        GeoPoint closestCoordinate = new GeoPoint(currentLocation);
+
+        Set<Integer> keys = coordinates.keySet();
+
+        for (int key : keys) {
+            double distance = coordinates.get(key).distanceToAsDouble(currentLocation);
+            if (distance < minimalDistance) {
+                minimalDistance = distance;
+                closestCoordinate = coordinates.get(key);
+            }
+        }
+
+        return closestCoordinate;
+    }
+
+    public double distanceToClosestCoordinte(GeoPoint currentLocation) {
         double minimalDistance = Double.MAX_VALUE;
 
         Set<Integer> keys = coordinates.keySet();
 
         for (int key : keys) {
-            double distance = coordinates.get(key).distanceToAsDouble(lastLocation);
-            if (distance<minimalDistance)
+            double distance = coordinates.get(key).distanceToAsDouble(currentLocation);
+            if (distance < minimalDistance)
                 minimalDistance = distance;
         }
 
