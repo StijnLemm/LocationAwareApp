@@ -12,9 +12,28 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/Spinner_destination_transportType"
         app:layout_constraintStart_toStartOf="parent"
+        app:iconifiedByDefault="false"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/Spinner_destination_transportType"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:layout_constraintEnd_toStartOf="@id/ImageView_refreshButton"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/ImageView_refreshButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:src="@drawable/ic_baseline_refresh_24"
+        app:layout_constraintBottom_toBottomOf="@id/SearchView_destination"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/SearchView_destination" />
 
     <TextView
         android:id="@+id/TextView_destination_current"
@@ -28,8 +47,8 @@
         app:layout_constraintTop_toBottomOf="@id/SearchView_destination" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="0dp"
         android:id="@+id/ConstraintLayout_destination_current"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -39,8 +58,8 @@
         android:id="@+id/TextView_lastUsedDestination"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
         android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
         android:layout_marginEnd="10dp"
         android:text="@string/last_used_locations"
         app:layout_constraintEnd_toEndOf="parent"

@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.study.locationawareapp.ui.api.APIModel;
+import com.study.locationawareapp.ui.api.TravelProfile;
 import com.study.locationawareapp.ui.destination.Destination;
 import com.study.locationawareapp.ui.destination.DestinationModel;
 import com.study.locationawareapp.ui.destination.DestinationSetter;
@@ -56,7 +57,6 @@ public class AppViewModel extends ViewModel implements DestinationSetter, Destin
     }
 
     public void getPOIs(GeoPoint geoPoint) {
-
         apiModel.getPOIs(geoPoint.getLatitude(), geoPoint.getLongitude());
     }
 
@@ -107,4 +107,7 @@ public class AppViewModel extends ViewModel implements DestinationSetter, Destin
         }
     }
 
+    public void setTravelProfile(TravelProfile travelProfile) {
+        apiModel.setTravelProfile(travelProfile);
+    }
 }

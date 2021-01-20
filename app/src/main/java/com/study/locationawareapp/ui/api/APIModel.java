@@ -27,6 +27,7 @@ import static com.study.locationawareapp.ui.api.CustomJSONParser.RouteParser;
 public class APIModel {
     private final POIsHolder poisHolder;
     private final RouteHolder routeHolder;
+    private TravelProfile travelProfile;
     private OkHttpClient client;
     private final String NS_BASE_URL = "https://gateway.apiportal.ns.nl/places-api/v2/";
     private final String ORS_BASE_URL = "https://api.openrouteservice.org/v2/directions/";
@@ -35,6 +36,7 @@ public class APIModel {
         this.client = new OkHttpClient();
         this.poisHolder = poisHolder;
         this.routeHolder = routeHolder;
+        this.travelProfile = TravelProfile.walking;
     }
 
     public void getPOIs(double latitude, double longitude) {
@@ -70,7 +72,7 @@ public class APIModel {
 
     public void getRoute(GeoPoint start,GeoPoint end) {
 
-        String url = constructUrlPostMethod(TravelProfile.walking);
+        String url = constructUrlPostMethod(travelProfile);
 
         String body = "{\"coordinates\":[[" + start.getLongitude()+","+start.getLatitude()+"],["+end.getLongitude()+","+end.getLatitude() + "]]}";
 
@@ -114,5 +116,7 @@ public class APIModel {
         return result;
     }
 
-
+    public void setTravelProfile(TravelProfile travelProfile) {
+        this.travelProfile = travelProfile;
+    }
 }
