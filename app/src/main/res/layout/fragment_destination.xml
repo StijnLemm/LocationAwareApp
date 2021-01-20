@@ -10,11 +10,10 @@
         android:id="@+id/SearchView_destination"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
+        app:iconifiedByDefault="false"
         app:layout_constraintEnd_toStartOf="@id/Spinner_destination_transportType"
         app:layout_constraintStart_toStartOf="parent"
-        app:iconifiedByDefault="false"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Spinner
@@ -35,6 +34,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/SearchView_destination" />
 
+    <ListView
+        android:id="@+id/ListView_destination_suggestions"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/SearchView_destination" />
+
     <TextView
         android:id="@+id/TextView_destination_current"
         android:layout_width="0dp"
@@ -44,7 +53,7 @@
         android:text="@string/currentDestinationString"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/SearchView_destination" />
+        app:layout_constraintTop_toBottomOf="@id/ListView_destination_suggestions" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/ConstraintLayout_destination_current"

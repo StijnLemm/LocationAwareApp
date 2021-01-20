@@ -13,7 +13,7 @@ public enum TravelProfile {
 
     public final String label;
 
-    private TravelProfile(String label) {
+    TravelProfile(String label) {
         this.label = label;
     }
 }

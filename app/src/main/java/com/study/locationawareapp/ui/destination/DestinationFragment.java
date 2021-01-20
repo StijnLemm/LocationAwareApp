@@ -5,9 +5,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +28,8 @@ import com.study.locationawareapp.R;
 import com.study.locationawareapp.ui.AppViewModel;
 import com.study.locationawareapp.ui.api.TravelProfile;
 
+import java.util.Observer;
+
 import static android.content.ContentValues.TAG;
 
 public class DestinationFragment extends Fragment implements DestinationSetter {
@@ -36,18 +41,35 @@ public class DestinationFragment extends Fragment implements DestinationSetter {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_destination, container, false);
         this.appViewModel = new ViewModelProvider(this.getActivity()).get(AppViewModel.class);
-        final RecyclerView recyclerView = root.findViewById(R.id.RecyclerView_lastDestinations);
 
-        //todo search field
-        final SearchView searchView = root.findViewById(R.id.SearchView_destination);
+        // Recycler view logic
+        RecyclerView recyclerView = root.findViewById(R.id.RecyclerView_lastDestinations);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(new DestinationAdapter(appViewModel, appViewModel));
+
+        // Logic behind the search view
+        SearchView searchView = root.findViewById(R.id.SearchView_destination);
+        ListView listView = root.findViewById(R.id.ListView_destination_suggestions);
+
+        // Create the custom adapter
+        StationSuggestionAdapter adapter = new StationSuggestionAdapter(getContext(), appViewModel);
+        appViewModel.poiChangedSubject.attachObserver(adapter);
+
+        // Set adapter
+        listView.setAdapter(adapter);
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                Log.d(TAG, "SearchView submitted: "+query);
+                //todo
                 return false;
             }
 
             @Override
-            public boolean onQueryTextChange(String newText) {
+            public boolean onQueryTextChange(String input) {
+                adapter.filter(input);
+                Log.i(TAG, "onQueryTextChange: "+input);
                 return false;
             }
         });
@@ -87,9 +109,6 @@ public class DestinationFragment extends Fragment implements DestinationSetter {
         getLayoutInflater().inflate(R.layout.item_destination, placeholderCurrent);
         // Update to the current set destination
         setDestination(appViewModel.getDestination().getValue());
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(new DestinationAdapter(appViewModel, appViewModel));
 
         return root;
     }

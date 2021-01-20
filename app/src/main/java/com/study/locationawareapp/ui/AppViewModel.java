@@ -18,6 +18,7 @@ import com.study.locationawareapp.ui.map.LocationProvider;
 import org.osmdroid.util.GeoPoint;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class AppViewModel extends ViewModel implements DestinationSetter, DestinationListProvider, POIsHolder, RouteHolder, DirectionsListProvider {
     public Subject poiChangedSubject;
@@ -53,7 +54,7 @@ public class AppViewModel extends ViewModel implements DestinationSetter, Destin
 
     @Override
     public ArrayList<Destination> getDestinationList() {
-        return destinationModel.getPastDestinations().getValue();
+        return pois;
     }
 
     public void getPOIs(GeoPoint geoPoint) {
@@ -109,5 +110,10 @@ public class AppViewModel extends ViewModel implements DestinationSetter, Destin
 
     public void setTravelProfile(TravelProfile travelProfile) {
         apiModel.setTravelProfile(travelProfile);
+    }
+
+    public void setPOIs(List<Destination> pois) {
+        this.pois = new ArrayList<>(pois);
+        poiChangedSubject.notifyObservers();
     }
 }

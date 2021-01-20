@@ -81,6 +81,9 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
         this.mapViewModel.setController(this);
         this.mapViewModel.initMapView(this.mapView);
 
+        appViewModel.setPOIs(pois);
+
+
         FloatingActionButton fab = view.findViewById(R.id.Button_CenterMapButton);
         fab.setOnClickListener(this);
     }
@@ -210,6 +213,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
                 destinations.add(destination);
             }
         }
+
         return destinations;
     }
 
