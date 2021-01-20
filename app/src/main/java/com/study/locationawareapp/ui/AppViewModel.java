@@ -86,7 +86,6 @@ public class AppViewModel extends ViewModel implements DestinationSetter, Destin
             list.add(directionModel.getCoordinates().get(i));
         }
 
-
         return list;
     }
 
@@ -121,10 +120,10 @@ public class AppViewModel extends ViewModel implements DestinationSetter, Destin
         poiChangedSubject.notifyObservers();
     }
 
-    public void addPreviousPOI(Destination destination){
+    public void addPreviousPOI(Destination destination) {
         this.previousPois.add(destination);
 
-        if (previousPois.size()>5)
+        if (previousPois.size() > 5)
             previousPois.remove((Destination) previousPois.toArray()[0]);
 
         previousPOIsChangedSubject.notifyObservers();
@@ -139,4 +138,23 @@ public class AppViewModel extends ViewModel implements DestinationSetter, Destin
     public ArrayList<Destination> getPreviousPOIsList() {
         return previousPois;
     }
+
+    public Destination getClosestStation(GeoPoint currentLocation) {
+        double smallestDistance = Double.MAX_VALUE;
+
+        Destination closestStation = new Destination("No stations found",0,0);
+
+        for (Destination destination : pois) {
+            GeoPoint geoPoint = new GeoPoint(destination.getLatitude(),destination.getLongitude());
+            double distance = geoPoint.distanceToAsDouble(currentLocation);
+            if (smallestDistance>distance) {
+                closestStation = destination;
+                smallestDistance = distance;
+            }
+        }
+
+        return closestStation;
+
+    }
+
 }

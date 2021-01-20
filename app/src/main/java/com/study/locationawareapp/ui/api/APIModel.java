@@ -23,6 +23,7 @@ import okhttp3.Response;
 
 import static com.study.locationawareapp.ui.api.CustomJSONParser.POIParser;
 import static com.study.locationawareapp.ui.api.CustomJSONParser.RouteParser;
+import static com.study.locationawareapp.ui.api.CustomJSONParser.StationParser;
 
 public class APIModel {
     private final POIsHolder poisHolder;
@@ -40,7 +41,6 @@ public class APIModel {
     }
 
     public void getPOIs(double latitude, double longitude) {
-        //TODO fine tune the radius
         //int radiusInMeters = 100000;
         String url = NS_BASE_URL + "places?type=stationV2";
 
@@ -70,11 +70,11 @@ public class APIModel {
         });
     }
 
-    public void getRoute(GeoPoint start,GeoPoint end) {
+    public void getRoute(GeoPoint start, GeoPoint end) {
 
         String url = constructUrlPostMethod(travelProfile);
 
-        String body = "{\"coordinates\":[[" + start.getLongitude()+","+start.getLatitude()+"],["+end.getLongitude()+","+end.getLatitude() + "]]}";
+        String body = "{\"coordinates\":[[" + start.getLongitude() + "," + start.getLatitude() + "],[" + end.getLongitude() + "," + end.getLatitude() + "]]}";
 
         RequestBody requestBody = RequestBody.create(body, MediaType.parse("application/json; charset=utf-8"));
 
@@ -119,4 +119,33 @@ public class APIModel {
     public void setTravelProfile(TravelProfile travelProfile) {
         this.travelProfile = travelProfile;
     }
+
+//    public void getClosestStation(GeoPoint currentLocation) {
+//        String url = NS_BASE_URL + "places?type=stationV2&radius=25000&lng=" + currentLocation.getLongitude() + "&lat=" + currentLocation.getLatitude();
+//
+//        Request request = new Request.Builder()
+//                .url(url)
+//                .addHeader("Ocp-Apim-Subscription-Key", "cb9a2ac92d124191b4216388587db953")
+//                .get()
+//                .build();
+//
+//        Call call = client.newCall(request);
+//
+//        call.enqueue(new Callback() {
+//            @Override
+//            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+//                Log.e("NS-API", "onFailure", e);
+//            }
+//
+//            @Override
+//            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+//                if (response.isSuccessful()) {
+//                    String data = response.body().string();
+//                    Log.d("NS-API", " onResponse " + data);
+//                    Destination destinations = StationParser(data);
+//                    stationHolder.setStation(destinations);
+//                }
+//            }
+//        });
+//    }
 }

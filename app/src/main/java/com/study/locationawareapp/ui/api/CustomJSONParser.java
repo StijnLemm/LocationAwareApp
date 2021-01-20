@@ -153,4 +153,29 @@ public class CustomJSONParser {
 
         return steps;
     }
+
+    public static Destination StationParser(String data){
+       Destination destinations = new Destination("No station in 25 km radius",0,0);
+
+        try {
+            JSONObject jsonObject = new JSONObject(data);
+            JSONArray payload = jsonObject.getJSONArray("payload");
+            JSONObject stations = payload.getJSONObject(0);
+            JSONArray locations = stations.getJSONArray("locations");
+            if (locations.length()>0){
+                JSONObject station = locations.getJSONObject(0);
+
+                String name = station.getString("name");
+                double lat = station.getDouble("lat");
+                double lng = station.getDouble("lng");
+
+                destinations = new Destination(name,lat,lng);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return destinations;
+    }
 }
