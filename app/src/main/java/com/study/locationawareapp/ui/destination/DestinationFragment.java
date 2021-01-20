@@ -42,7 +42,6 @@ public class DestinationFragment extends Fragment implements DestinationSetter {
         recyclerView.setAdapter(destinationAdapter);
         appViewModel.previousPOIsChangedSubject.attachObserver(destinationAdapter);
 
-
         // Logic behind the search view
         SearchView searchView = root.findViewById(R.id.SearchView_destination);
         ListView listView = root.findViewById(R.id.ListView_destination_suggestions);
@@ -54,24 +53,40 @@ public class DestinationFragment extends Fragment implements DestinationSetter {
         // Set adapter
         listView.setAdapter(adapter);
 
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+            // Set the current destination
+            appViewModel.setDestination(adapter.getItem(position));
+            // Clear focus so the keyboard doesn't show
+            searchView.clearFocus();
+            // Clear the search bar and this will clear the list view
+            searchView.setQuery("",true);
+        });
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                Log.d(TAG, "SearchView submitted: "+query);
-                //todo
+                Log.d(TAG, "SearchView submitted: " + query);
+                // Get the top from list view
+                Destination destination = adapter.getItem(0);
+
+                // Check if there are any results
+                if (destination == null)
+                    return false;
+
+                appViewModel.setDestination(destination);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String input) {
                 adapter.filter(input);
-                Log.i(TAG, "onQueryTextChange: "+input);
+                Log.i(TAG, "onQueryTextChange: " + input);
                 return false;
             }
         });
 
         // List of all the travel profiles, wheelchair is not in here because the api doesn't work well with it
-        TravelProfile[] travelProfiles = new TravelProfile[]{TravelProfile.walking, TravelProfile.cycling , TravelProfile.car};
+        TravelProfile[] travelProfiles = new TravelProfile[]{TravelProfile.walking, TravelProfile.cycling, TravelProfile.car};
         // Spinner logic
         Spinner spinner = root.findViewById(R.id.Spinner_destination_transportType);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

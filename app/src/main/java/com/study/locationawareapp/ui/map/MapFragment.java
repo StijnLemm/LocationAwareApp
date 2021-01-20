@@ -47,6 +47,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
     private AppViewModel appViewModel;
     private List<Destination> pois;
     private Polyline routeDrawing;
+    private Polyline trainRouteDrawing;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

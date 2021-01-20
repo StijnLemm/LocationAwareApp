@@ -80,6 +80,7 @@ public class StationSuggestionAdapter extends BaseAdapter implements Observer {
         }
 
         holder.textViewStationName.setText(searchedStations.get(position).getName());
+
         return view;
     }
 
