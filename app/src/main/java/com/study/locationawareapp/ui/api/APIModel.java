@@ -47,7 +47,7 @@ public class APIModel {
 
     public void getPOIs(double latitude, double longitude) {
         //int radiusInMeters = 100000;
-        String url = NS_BASE_URL + "places?type=stationV2";
+        String url = NS_BASE_URL + "places?type=stationV2&limit=400";
 
         Request request = new Request.Builder()
                 .url(url)
