@@ -46,7 +46,7 @@ public class APIModel {
     }
 
     public void getPOIs(double latitude, double longitude) {
-        String url = NS_BASE_URL + "places?type=stationV2";
+        String url = NS_BASE_URL + "places?type=stationV2&limit=" + Integer.MAX_VALUE;
 
         Request request = new Request.Builder()
                 .url(url)

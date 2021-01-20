@@ -10,6 +10,7 @@ import com.study.locationawareapp.ui.AppViewModel;
 import com.study.locationawareapp.ui.CustomViewPager;
 import com.study.locationawareapp.ui.map.MapViewModel;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
@@ -33,7 +34,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         setContentView(R.layout.activity_main);
+        requestPermissionsIfNecessary(new String[]{
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+        });
+    }
 
+    private void init() {
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
         CustomViewPager viewPager = findViewById(R.id.ViewPager_main);
         viewPager.disableScroll(true);
@@ -42,10 +49,6 @@ public class MainActivity extends AppCompatActivity {
         tabs.setupWithViewPager(viewPager);
         tabs.selectTab(tabs.getTabAt(1));
 
-        requestPermissionsIfNecessary(new String[]{
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION,
-        });
 
         this.startLocationListener();
     }
@@ -75,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
                     != PackageManager.PERMISSION_GRANTED) {
                 // Permission is not granted
                 permissionsToRequest.add(permission);
+
             }
         }
         if (permissionsToRequest.size() > 0) {
@@ -82,6 +86,26 @@ public class MainActivity extends AppCompatActivity {
                     this,
                     permissionsToRequest.toArray(new String[0]),
                     PERMISSIONS_REQUEST_CODE);
+        } else {
+            this.init();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode == PERMISSIONS_REQUEST_CODE){
+            boolean init = false;
+            for (int grantResult : grantResults) {
+                if (grantResult == PackageManager.PERMISSION_GRANTED) {
+                    init = true;
+                } else {
+                    break;
+                }
+            }
+            if(init){
+                this.init();
+            }
         }
     }
 
