@@ -13,9 +13,6 @@ public class DestinationModel {
         this.pastDestinations = new MutableLiveData<>();
         this.pastDestinations.setValue(new ArrayList<>());
 
-        this.pastDestinations.getValue().add(new Destination("Breda", 51.5955543518066, 4.78000020980835));
-        this.pastDestinations.getValue().add(new Destination("Breda-Prinsenbeek", 51.606388092041, 4.72083330154419));
-
         this.currentDestination = new MutableLiveData<>();
     }
 

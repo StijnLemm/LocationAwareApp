@@ -4,15 +4,21 @@ import org.json.JSONObject;
 import org.osmdroid.util.GeoPoint;
 
 public class Destination {
+    private final int UICCode;
     private String name;
     private double latitude;
     private double longitude;
     private double distance;
 
-    public Destination(String name, double latitude, double longitude) {
+    public Destination(String name, int UICCode, double latitude, double longitude) {
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.UICCode = UICCode;
+    }
+
+    public int getUICCode() {
+        return UICCode;
     }
 
     public String getName() {

@@ -2,6 +2,7 @@ package com.study.locationawareapp.ui.map;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.DashPathEffect;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -136,6 +137,9 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
         this.getActivity().runOnUiThread(() -> {
             //TODO stippeltjes/streepjes :)
             mapView.getOverlayManager().remove(this.trainDrawing);
+            polyline.getOutlinePaint().setPathEffect(new DashPathEffect(new float[]{10, 20}, 0));
+            polyline.getOutlinePaint().setColor(getResources().getColor(R.color.blue_2));
+
             mapView.getOverlayManager().add(polyline);
             mapView.invalidate();
             this.trainDrawing = polyline;

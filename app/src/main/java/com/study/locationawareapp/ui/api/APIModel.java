@@ -74,9 +74,10 @@ public class APIModel {
         });
     }
 
-    public void getNSInformation(String fromStation, String toStation){
+    public void getNSInformation(int originUicCode, int destinationUicCode){
 
-        String body = "?fromStation=" + fromStation + "&toStation=" + toStation;
+        String body = "?originUicCode=" + originUicCode + "&destinationUicCode=" + destinationUicCode;
+        Log.d("!!!", body);
         String url = NS_BASE_URL_INFO + body;
 
         Request request = new Request.Builder()

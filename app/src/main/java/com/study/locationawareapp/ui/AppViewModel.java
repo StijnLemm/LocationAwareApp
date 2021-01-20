@@ -39,6 +39,7 @@ public class AppViewModel extends ViewModel implements DestinationSetter, Destin
     private ArrayList<Destination> previousPois;
     private LocationProvider locationProvider;
     private TrainRouteView trainRouteView;
+    private GeoPoint lastLocation;
 
     public AppViewModel() {
         this.apiModel = new APIModel(this, this);
@@ -54,8 +55,9 @@ public class AppViewModel extends ViewModel implements DestinationSetter, Destin
     @Override
     public void setDestination(Destination destination) {
         destinationModel.setCurrentDestination(destination);
-        apiModel.getRoute(locationProvider.getLastLocation(), destination.getGeoPoint());
-        apiModel.getNSInformation("breda", destination.getName());
+        Destination closestStation = this.getClosestStation(this.lastLocation);
+        apiModel.getRoute(locationProvider.getLastLocation(), closestStation.getGeoPoint());
+        apiModel.getNSInformation(closestStation.getUICCode(), destination.getUICCode());
     }
 
     public void setTrainRouteView(TrainRouteView trainRouteView) {
@@ -125,6 +127,7 @@ public class AppViewModel extends ViewModel implements DestinationSetter, Destin
             if (farFromRoute)
                 setDestination(getDestination().getValue());
         }
+        this.lastLocation = lastLocation;
     }
 
     public void setTravelProfile(TravelProfile travelProfile) {
@@ -158,7 +161,7 @@ public class AppViewModel extends ViewModel implements DestinationSetter, Destin
     public Destination getClosestStation(GeoPoint currentLocation) {
         double smallestDistance = Double.MAX_VALUE;
 
-        Destination closestStation = new Destination("No stations found",0,0);
+        Destination closestStation = new Destination("No stations found",0,0,0);
 
         for (Destination destination : pois) {
             GeoPoint geoPoint = new GeoPoint(destination.getLatitude(),destination.getLongitude());

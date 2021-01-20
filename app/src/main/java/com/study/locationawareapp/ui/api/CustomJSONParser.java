@@ -31,10 +31,11 @@ public class CustomJSONParser {
                 JSONObject location = locations.getJSONObject(i);
 
                 String name = location.getString("name");
+                int UICCode = location.getInt("UICCode");
                 double lat = location.getDouble("lat");
                 double lng = location.getDouble("lng");
 
-                Destination destination = new Destination(name, lat, lng);
+                Destination destination = new Destination(name, UICCode, lat, lng);
                 destinations.add(destination);
             }
 
@@ -191,7 +192,7 @@ public class CustomJSONParser {
     }
 
     public static Destination StationParser(String data){
-       Destination destinations = new Destination("No station in 25 km radius",0,0);
+       Destination destinations = new Destination("No station in 25 km radius",0,0,0);
 
         try {
             JSONObject jsonObject = new JSONObject(data);
@@ -202,10 +203,11 @@ public class CustomJSONParser {
                 JSONObject station = locations.getJSONObject(0);
 
                 String name = station.getString("name");
+                int UICCode = station.getInt("UICCode");
                 double lat = station.getDouble("lat");
                 double lng = station.getDouble("lng");
 
-                destinations = new Destination(name,lat,lng);
+                destinations = new Destination(name,UICCode,lat,lng);
             }
 
         } catch (JSONException e) {
