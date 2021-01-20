@@ -40,6 +40,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
 
     private static final String POI_KEY = "POI";
     private static final String SAVED_DOY_KEY = "DOY";
+    private static final String PREVIOUS_POI_KEY = "PREVIOUS_POI";
 
     private MapView mapView;
     private MapViewModel mapViewModel;
@@ -68,6 +69,9 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
         this.routeDrawing = new Polyline();
 
         appViewModel.routeChangedSubject.attachObserver(this);
+
+        appViewModel.setPreviousPOIs(loadPreviousPOIs());
+        appViewModel.previousPOIsChangedSubject.attachObserver(this);
 
         return inflater.inflate(R.layout.fragment_map, container, false);
     }
@@ -214,20 +218,60 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
             }
         }
 
+
+
         return destinations;
     }
+
+    public ArrayList<Destination> loadPreviousPOIs(){
+        ArrayList<Destination> previousPOIs = new ArrayList<>();
+        Gson gson = new Gson();
+
+        SharedPreferences mPrefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+
+        Set<String> previousPOIsJson = mPrefs.getStringSet(PREVIOUS_POI_KEY, null);
+
+        if (previousPOIsJson != null) {
+            for (String jsonDestination : previousPOIsJson) {
+                Destination destination = gson.fromJson(jsonDestination, Destination.class);
+                previousPOIs.add(destination);
+            }
+        }
+
+        return previousPOIs;
+    }
+
 
     @Override
     public void update(Observable o, Object arg) {
         if (arg.equals(0)) {
-            List<Destination> destinations = this.appViewModel.getLoadedPOIs();
+            List<Destination> destinations = this.appViewModel.getDestinationList();
 
             this.savePoisIfNeeded(destinations);
 
             drawPOIs(destinations);
         } else if (arg.equals(1)) {
             drawRoute();
+        }else if (arg.equals(2)){
+            ArrayList<Destination> previousPOIs = appViewModel.getPreviousPOIsList();
+            this.savePreviousPOIs(previousPOIs);
         }
+    }
+
+    private void savePreviousPOIs(ArrayList<Destination> previousPOIs) {
+        SharedPreferences mPrefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = mPrefs.edit();
+
+        Set<String> destinationStrings = new HashSet<>();
+
+        for (Destination prevPOI : previousPOIs) {
+            Gson gson = new Gson();
+            String destinationString = gson.toJson(prevPOI);
+            destinationStrings.add(destinationString);
+        }
+
+        editor.putStringSet(PREVIOUS_POI_KEY, destinationStrings);
+        editor.apply();
     }
 
     @Override

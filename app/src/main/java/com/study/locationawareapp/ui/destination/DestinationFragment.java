@@ -5,21 +5,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,8 +22,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.study.locationawareapp.R;
 import com.study.locationawareapp.ui.AppViewModel;
 import com.study.locationawareapp.ui.api.TravelProfile;
-
-import java.util.Observer;
 
 import static android.content.ContentValues.TAG;
 
@@ -45,7 +38,10 @@ public class DestinationFragment extends Fragment implements DestinationSetter {
         // Recycler view logic
         RecyclerView recyclerView = root.findViewById(R.id.RecyclerView_lastDestinations);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(new DestinationAdapter(appViewModel, appViewModel));
+        DestinationAdapter destinationAdapter = new DestinationAdapter(appViewModel, appViewModel);
+        recyclerView.setAdapter(destinationAdapter);
+        appViewModel.previousPOIsChangedSubject.attachObserver(destinationAdapter);
+
 
         // Logic behind the search view
         SearchView searchView = root.findViewById(R.id.SearchView_destination);
@@ -73,10 +69,6 @@ public class DestinationFragment extends Fragment implements DestinationSetter {
                 return false;
             }
         });
-
-        // Bind the refresh button to the refresh method
-        ImageView refreshButton = root.findViewById(R.id.ImageView_refreshButton);
-        refreshButton.setOnClickListener(view -> refreshRecentLocations());
 
         // List of all the travel profiles, wheelchair is not in here because the api doesn't work well with it
         TravelProfile[] travelProfiles = new TravelProfile[]{TravelProfile.walking, TravelProfile.cycling , TravelProfile.car};
@@ -135,10 +127,6 @@ public class DestinationFragment extends Fragment implements DestinationSetter {
             TextView switches = placeholderCurrent.findViewById(R.id.TextView_destinationItem_switches);
             switches.setText("" + destination.getSwitches());
         }
-    }
-
-    public void refreshRecentLocations() {
-        //todo add refresh logic
     }
 
 }

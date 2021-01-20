@@ -9,6 +9,7 @@ import com.study.locationawareapp.ui.destination.Destination;
 import com.study.locationawareapp.ui.destination.DestinationModel;
 import com.study.locationawareapp.ui.destination.DestinationSetter;
 import com.study.locationawareapp.ui.destination.DestinationListProvider;
+import com.study.locationawareapp.ui.destination.PreviousDestinationsListProvider;
 import com.study.locationawareapp.ui.directions.DirectionModel;
 import com.study.locationawareapp.ui.directions.DirectionsListProvider;
 import com.study.locationawareapp.ui.directions.Route;
@@ -18,15 +19,20 @@ import com.study.locationawareapp.ui.map.LocationProvider;
 import org.osmdroid.util.GeoPoint;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-public class AppViewModel extends ViewModel implements DestinationSetter, DestinationListProvider, POIsHolder, RouteHolder, DirectionsListProvider {
+public class AppViewModel extends ViewModel implements DestinationSetter, DestinationListProvider, POIsHolder, RouteHolder, DirectionsListProvider, PreviousDestinationsListProvider {
     public Subject poiChangedSubject;
     public Subject routeChangedSubject;
+    public Subject previousPOIsChangedSubject;
     private final DestinationModel destinationModel;
     private final DirectionModel directionModel;
     private final APIModel apiModel;
     private ArrayList<Destination> pois;
+    private ArrayList<Destination> previousPois;
     private LocationProvider locationProvider;
 
     public AppViewModel() {
@@ -34,8 +40,10 @@ public class AppViewModel extends ViewModel implements DestinationSetter, Destin
         this.destinationModel = new DestinationModel();
         this.directionModel = new DirectionModel();
         this.pois = new ArrayList<>();
+        this.previousPois = new ArrayList<>();
         this.poiChangedSubject = new Subject(0);
         this.routeChangedSubject = new Subject(1);
+        this.previousPOIsChangedSubject = new Subject(2);
     }
 
     @Override
@@ -46,10 +54,6 @@ public class AppViewModel extends ViewModel implements DestinationSetter, Destin
 
     public MutableLiveData<Destination> getDestination() {
         return destinationModel.getCurrentDestination();
-    }
-
-    public ArrayList<Destination> getLoadedPOIs() {
-        return pois;
     }
 
     @Override
@@ -115,5 +119,24 @@ public class AppViewModel extends ViewModel implements DestinationSetter, Destin
     public void setPOIs(List<Destination> pois) {
         this.pois = new ArrayList<>(pois);
         poiChangedSubject.notifyObservers();
+    }
+
+    public void addPreviousPOI(Destination destination){
+        this.previousPois.add(destination);
+
+        if (previousPois.size()>5)
+            previousPois.remove((Destination) previousPois.toArray()[0]);
+
+        previousPOIsChangedSubject.notifyObservers();
+    }
+
+    public void setPreviousPOIs(ArrayList<Destination> previousPOIs) {
+        this.previousPois = previousPOIs;
+        previousPOIsChangedSubject.notifyObservers();
+    }
+
+    @Override
+    public ArrayList<Destination> getPreviousPOIsList() {
+        return previousPois;
     }
 }
