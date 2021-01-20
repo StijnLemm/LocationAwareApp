@@ -2,9 +2,6 @@ package com.study.locationawareapp.ui.destination;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.study.locationawareapp.ui.POIsHolder;
-import com.study.locationawareapp.ui.Subject;
-
 import java.util.ArrayList;
 
 public class DestinationModel {

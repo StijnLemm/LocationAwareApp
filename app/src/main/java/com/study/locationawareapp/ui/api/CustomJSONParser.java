@@ -11,6 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.overlay.Polyline;
 
 import java.lang.reflect.GenericArrayType;
 import java.util.ArrayList;
@@ -50,9 +51,43 @@ public class CustomJSONParser {
         double distance = routeParserDistance(data);
         int duration = routeParserDuration(data);
 
-        Route route = new Route(coordinates, steps, distance, duration);
+        return new Route(coordinates, steps, distance, duration);
+    }
 
+    public static Polyline NSRouteParser(String data){
+        Polyline route = new Polyline();
+        try {
+            JSONObject jsonObject = new JSONObject(data);
+            JSONArray jsonArray = jsonObject.getJSONArray("trips");
+            JSONObject trip = jsonArray.getJSONObject(0);
+            JSONArray legs = trip.getJSONArray("legs");
+            for (int i = 0; i < legs.length(); i++) {
+                JSONObject leg = legs.getJSONObject(i);
+                JSONArray stops = leg.getJSONArray("stops");
+                for (int j = 0; j < stops.length(); j++) {
+                    JSONObject stop = stops.getJSONObject(j);
+                    double lng = stop.getDouble("lng");
+                    double lat = stop.getDouble("lat");
+                    route.addPoint(new GeoPoint(lat, lng));
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         return route;
+    }
+
+    public static String GetURLFromNSMessage(String data){
+        String url = null;
+        try {
+            JSONObject jsonObject = new JSONObject(data);
+            JSONArray jsonArray = jsonObject.getJSONArray("trips");
+            JSONObject shareURl = jsonArray.getJSONObject(0);
+            url = shareURl.getString("uri");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return url;
     }
 
     private static double routeParserDistance(String data) {

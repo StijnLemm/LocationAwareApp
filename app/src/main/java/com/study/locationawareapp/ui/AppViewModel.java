@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel;
 
 import com.study.locationawareapp.ui.api.APIModel;
 import com.study.locationawareapp.ui.api.TravelProfile;
+import com.study.locationawareapp.ui.destination.CurrentDestinationHolder;
 import com.study.locationawareapp.ui.destination.Destination;
+import com.study.locationawareapp.ui.destination.DestinationFragment;
 import com.study.locationawareapp.ui.destination.DestinationModel;
 import com.study.locationawareapp.ui.destination.DestinationSetter;
 import com.study.locationawareapp.ui.destination.DestinationListProvider;
@@ -15,8 +17,10 @@ import com.study.locationawareapp.ui.directions.DirectionsListProvider;
 import com.study.locationawareapp.ui.directions.Route;
 import com.study.locationawareapp.ui.directions.Step;
 import com.study.locationawareapp.ui.map.LocationProvider;
+import com.study.locationawareapp.ui.map.TrainRouteView;
 
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.overlay.Polyline;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,6 +38,7 @@ public class AppViewModel extends ViewModel implements DestinationSetter, Destin
     private ArrayList<Destination> pois;
     private ArrayList<Destination> previousPois;
     private LocationProvider locationProvider;
+    private TrainRouteView trainRouteView;
 
     public AppViewModel() {
         this.apiModel = new APIModel(this, this);
@@ -50,6 +55,10 @@ public class AppViewModel extends ViewModel implements DestinationSetter, Destin
     public void setDestination(Destination destination) {
         destinationModel.setCurrentDestination(destination);
         apiModel.getRoute(locationProvider.getLastLocation(), destination.getGeoPoint());
+    }
+
+    public void setTrainRouteView(TrainRouteView trainRouteView) {
+        this.trainRouteView = trainRouteView;
     }
 
     public MutableLiveData<Destination> getDestination() {
@@ -76,6 +85,12 @@ public class AppViewModel extends ViewModel implements DestinationSetter, Destin
     public void setRoute(Route route) {
         directionModel.setRoute(route);
         routeChangedSubject.notifyObservers();
+    }
+
+    @Override
+    public void setTrainRoute(Polyline route) {
+        if(this.trainRouteView != null)
+            this.trainRouteView.drawTrainRoute(route);
     }
 
     @Override
@@ -138,5 +153,9 @@ public class AppViewModel extends ViewModel implements DestinationSetter, Destin
     @Override
     public ArrayList<Destination> getPreviousPOIsList() {
         return previousPois;
+    }
+
+    public void setCurrentDestinationHolder(CurrentDestinationHolder currentDestinationHolder) {
+        this.apiModel.setCurrentDestinationHolder(currentDestinationHolder);
     }
 }

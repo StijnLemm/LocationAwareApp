@@ -36,7 +36,7 @@ import java.util.Set;
 
 import static android.content.ContentValues.TAG;
 
-public class MapFragment extends Fragment implements View.OnClickListener, MapController, Observer {
+public class MapFragment extends Fragment implements View.OnClickListener, MapController, Observer, TrainRouteView {
 
     private static final String POI_KEY = "POI";
     private static final String SAVED_DOY_KEY = "DOY";
@@ -63,7 +63,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
                 new ViewModelProvider(this.getActivity()).get(AppViewModel.class);
 
         appViewModel.setLocationProvider(mapViewModel);
-
+        appViewModel.setTrainRouteView(this);
         appViewModel.poiChangedSubject.attachObserver(this);
 
         this.pois = this.loadSavedPois();
@@ -127,6 +127,15 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
                 mapView.invalidate();
             });
         }
+    }
+
+    @Override
+    public void drawTrainRoute(Polyline polyline) {
+        this.getActivity().runOnUiThread(() -> {
+            //TODO stippeltjes/streepjes :)
+            mapView.getOverlayManager().add(polyline);
+            mapView.invalidate();
+        });
     }
 
     public void drawRoute() {
@@ -279,4 +288,6 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
     public void onDestroyView() {
         super.onDestroyView();
     }
+
+
 }
