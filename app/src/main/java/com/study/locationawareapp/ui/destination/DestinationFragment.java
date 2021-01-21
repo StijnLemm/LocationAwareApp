@@ -38,6 +38,7 @@ public class DestinationFragment extends Fragment implements DestinationSetter, 
     private AppViewModel appViewModel;
     private TextView textCurrent;
     private WebView webView;
+    private StationSuggestionAdapter adapter;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_destination, container, false);
@@ -55,7 +56,7 @@ public class DestinationFragment extends Fragment implements DestinationSetter, 
         ListView listView = root.findViewById(R.id.ListView_destination_suggestions);
 
         // Create the custom adapter
-        StationSuggestionAdapter adapter = new StationSuggestionAdapter(getContext(), appViewModel);
+        this.adapter = new StationSuggestionAdapter(getContext(), appViewModel);
         appViewModel.poiChangedSubject.attachObserver(adapter);
 
         // Set adapter
@@ -172,5 +173,4 @@ public class DestinationFragment extends Fragment implements DestinationSetter, 
             title.setText(destination.getName());
         }
     }
-
 }

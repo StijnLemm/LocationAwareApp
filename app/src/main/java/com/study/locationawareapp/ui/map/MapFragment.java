@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.DashPathEffect;
 import android.os.Bundle;
+import android.util.ArraySet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,6 +54,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
     private List<Destination> pois;
     private Polyline routeDrawing;
     private Polyline trainDrawing;
+    private ArrayList<Destination> previousPois;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -105,7 +107,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
     @Override
     public void setCenter(GeoPoint location) {
         this.loadPois(location);
-        if(getActivity() != null)
+        if (getActivity() != null)
             this.getActivity().runOnUiThread(() -> {
                 this.mapView.getController().setCenter(location);
             });
@@ -113,7 +115,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
 
     @Override
     public void setCenterAnimated(GeoPoint location) {
-        if(getActivity() != null)
+        if (getActivity() != null)
             this.getActivity().runOnUiThread(() -> {
                 this.mapView.getController().zoomTo(18d);
                 this.mapView.getController().animateTo(location);
@@ -137,7 +139,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
 
     @Override
     public void drawTrainRoute(Polyline polyline) {
-        if(getActivity() != null)
+        if (getActivity() != null)
             getActivity().runOnUiThread(() -> {
                 //TODO stippeltjes/streepjes :)
                 mapView.getOverlayManager().remove(this.trainDrawing);
@@ -151,7 +153,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
     }
 
     public void drawRoute() {
-        if(getActivity() != null)
+        if (getActivity() != null)
             getActivity().runOnUiThread(() -> {
 
                 mapView.getOverlayManager().remove(routeDrawing);
@@ -192,7 +194,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
     private Calendar savedDate;
 
     private void savePoisIfNeeded(List<Destination> destinations) {
-        if (getActivity()==null)
+        if (getActivity() == null)
             return;
 
         //getting the current time in milliseconds, and creating a Date object from it:
@@ -245,13 +247,12 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
         }
 
 
-
         return destinations;
     }
 
-    public ArrayList<Destination> loadPreviousPOIs(){
+    public ArrayList<Destination> loadPreviousPOIs() {
         ArrayList<Destination> previousPOIs = new ArrayList<>();
-        if(getActivity() != null){
+        if (getActivity() != null) {
             Gson gson = new Gson();
 
             SharedPreferences mPrefs = getActivity().getPreferences(Context.MODE_PRIVATE);
@@ -265,7 +266,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
                 }
             }
         }
-
+        this.previousPois = previousPOIs;
         return previousPOIs;
     }
 
@@ -280,28 +281,27 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
             drawPOIs(destinations);
         } else if (arg.equals(1)) {
             drawRoute();
-        }else if (arg.equals(2)){
+        } else if (arg.equals(2)) {
             ArrayList<Destination> previousPOIs = appViewModel.getPreviousPOIsList();
             this.savePreviousPOIs(previousPOIs);
         }
     }
 
     private void savePreviousPOIs(ArrayList<Destination> previousPOIs) {
-        if (getActivity()==null)
+        if (getActivity() == null)
             return;
 
+        Set<String> destinationStrings = new HashSet<>();
         SharedPreferences mPrefs = getActivity().getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = mPrefs.edit();
 
-            for (Destination prevPOI : previousPOIs) {
-                Gson gson = new Gson();
-                String destinationString = gson.toJson(prevPOI);
-                destinationStrings.add(destinationString);
-            }
-
-            editor.putStringSet(PREVIOUS_POI_KEY, destinationStrings);
-            editor.apply();
+        for (Destination prevPOI : previousPOIs) {
+            Gson gson = new Gson();
+            String destinationString = gson.toJson(prevPOI);
+            destinationStrings.add(destinationString);
         }
-    }
 
+        editor.putStringSet(PREVIOUS_POI_KEY, destinationStrings);
+        editor.apply();
+    }
 }

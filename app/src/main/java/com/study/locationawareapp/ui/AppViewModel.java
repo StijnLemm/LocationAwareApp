@@ -118,6 +118,12 @@ public class AppViewModel extends ViewModel implements DestinationSetter, Destin
     }
 
     public void onLocationChanged(GeoPoint lastLocation) {
+
+        if(this.lastLocation == null && lastLocation != null){
+            this.lastLocation = lastLocation;
+            this.setDestination(this.previousPois.get(this.previousPois.size()-1));
+        }
+
         if (directionModel.getRoute() != null) {
             boolean routeChanged = directionModel.getRoute().hasVisitedGeoPoint(lastLocation);
             if (routeChanged)
@@ -151,9 +157,6 @@ public class AppViewModel extends ViewModel implements DestinationSetter, Destin
     public void setPreviousPOIs(ArrayList<Destination> previousPOIs) {
         this.previousPois = previousPOIs;
         this.previousPOIsChangedSubject.notifyObservers();
-        if(previousPOIs.size() > 0) {
-            this.setDestination(previousPOIs.get(0));
-        }
     }
 
     @Override
