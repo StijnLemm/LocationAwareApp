@@ -12,10 +12,6 @@ import java.util.HashMap;
 public class DirectionModel {
     private Route route;
 
-    public DirectionModel() {
-
-    }
-
     public void setRoute(Route route) {
         this.route = route;
     }

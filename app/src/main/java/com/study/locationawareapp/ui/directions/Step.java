@@ -19,28 +19,12 @@ public class Step {
         this.endWayPoint = endWayPoint;
     }
 
-    public double getDistance() {
-        return distance;
-    }
-
-    public int getDuration() {
-        return duration;
-    }
-
-    public int getType() {
-        return type;
-    }
-
     public String getInstruction() {
         return instruction;
     }
 
     public String getStreetName() {
         return streetName;
-    }
-
-    public int getStartWayPoint() {
-        return startWayPoint;
     }
 
     public int getEndWayPoint() {
