@@ -22,6 +22,8 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.overlay.Polyline;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -139,8 +141,10 @@ public class AppViewModel extends ViewModel implements DestinationSetter, Destin
     }
 
     public void addPreviousPOI(Destination destination) {
-        this.previousPois.add(destination);
+        previousPois.remove(destination);
 
+
+        this.previousPois.add(destination);
         previousPOIsChangedSubject.notifyObservers();
     }
 
@@ -151,7 +155,9 @@ public class AppViewModel extends ViewModel implements DestinationSetter, Destin
 
     @Override
     public ArrayList<Destination> getPreviousPOIsList() {
-        return previousPois;
+        ArrayList<Destination> destinations = new ArrayList<>(previousPois);
+        Collections.reverse(destinations);
+        return destinations;
     }
 
     public Destination getClosestStation(GeoPoint currentLocation) {

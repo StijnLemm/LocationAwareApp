@@ -109,6 +109,8 @@ public class APIModel {
     }
 
     public void getRoute(GeoPoint start,GeoPoint end) {
+        if (start==null)
+            return;
 
         String url = constructUrlPostMethod(travelProfile);;
 
