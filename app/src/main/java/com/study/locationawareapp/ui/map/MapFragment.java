@@ -23,12 +23,17 @@ import com.study.locationawareapp.ui.AppViewModel;
 import com.study.locationawareapp.ui.destination.Destination;
 
 import org.jetbrains.annotations.NotNull;
+import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.library.BuildConfig;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.CustomZoomButtonsController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.Polyline;
+import org.osmdroid.views.overlay.gestures.RotationGestureOverlay;
+import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -92,13 +97,40 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
 
         this.mapView = view.findViewById(R.id.MapView_Map);
         this.mapViewModel.setController(this);
-        this.mapViewModel.initMapView(this.mapView);
+        this.initMapView(this.mapView);
 
         appViewModel.setPOIs(pois);
 
 
         FloatingActionButton fab = view.findViewById(R.id.Button_CenterMapButton);
         fab.setOnClickListener(this);
+    }
+
+    public void initMapView(MapView mapView){
+        mapView.setTileSource(TileSourceFactory.MAPNIK);
+        mapView.setUseDataConnection(true);
+
+        IMapController controller = mapView.getController();
+        controller.setZoom(18d);
+
+
+        MyLocationNewOverlay myLocationNewOverlay = new MyLocationNewOverlay(mapView);
+        myLocationNewOverlay.enableMyLocation();
+        myLocationNewOverlay.setDrawAccuracyEnabled(true);
+        myLocationNewOverlay.runOnFirstFix(() -> {
+            this.setCenter(myLocationNewOverlay.getMyLocation());
+        });
+
+        this.mapViewModel.setMyLocationNewOverlay(myLocationNewOverlay);
+
+        RotationGestureOverlay rotationGestureOverlay = new RotationGestureOverlay(mapView);
+        rotationGestureOverlay.setEnabled(true);
+        mapView.setMultiTouchControls(true);
+
+        mapView.getOverlays().add(rotationGestureOverlay);
+        mapView.getOverlays().add(myLocationNewOverlay);
+
+        mapView.getZoomController().setVisibility(CustomZoomButtonsController.Visibility.NEVER);
     }
 
     /*
@@ -117,8 +149,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
     public void setCenterAnimated(GeoPoint location) {
         if (getActivity() != null)
             this.getActivity().runOnUiThread(() -> {
-                this.mapView.getController().zoomTo(18d);
-                this.mapView.getController().animateTo(location);
+                this.mapView.getController().animateTo(location, 18d, 500L);
             });
     }
 
