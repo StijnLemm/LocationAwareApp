@@ -31,10 +31,10 @@ public class MapViewModelTest extends TestCase implements MapController {
 
     public void testSetController() {
         this.mapViewModel.setController(this);
-
     }
 
     public void testCenterMapAnimated() {
+        this.mapViewModel.setController(this);
         this.mapViewModel.centerMapAnimated();
     }
 
