@@ -23,10 +23,6 @@ public class MapViewModel extends ViewModel implements LocationProvider{
         return this.myLocationNewOverlay.getMyLocation();
     }
 
-    private void centerMap(){
-        this.mapController.setCenter(this.getLastLocation());
-    }
-
     public void centerMapAnimated() {
         this.mapController.setCenterAnimated(this.getLastLocation());
     }
