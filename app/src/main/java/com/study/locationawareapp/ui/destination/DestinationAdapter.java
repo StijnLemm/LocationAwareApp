@@ -10,13 +10,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.study.locationawareapp.R;
 
+import java.util.Observable;
+import java.util.Observer;
 
-public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.ViewHolder> {
+
+public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.ViewHolder> implements Observer {
     private final DestinationSetter destinationSetter;
-    private final DestinationListProvider destinationListProvider;
+    private final PreviousDestinationsListProvider previousDestinationsListProvider;
 
-    public DestinationAdapter(DestinationListProvider destinationListProvider, DestinationSetter destinationSetter) {
-        this.destinationListProvider = destinationListProvider;
+    public DestinationAdapter(PreviousDestinationsListProvider previousDestinationsListProvider, DestinationSetter destinationSetter) {
+        this.previousDestinationsListProvider = previousDestinationsListProvider;
         this.destinationSetter = destinationSetter;
     }
 
@@ -31,11 +34,9 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Destination destination = destinationListProvider.getDestinationList().get(position);
+        Destination destination = previousDestinationsListProvider.getPreviousPOIsList().get(position);
 
         holder.setTitle(destination.getName());
-        holder.setDuration(""+destination.getDurationInMinutes());
-        holder.setSwitches(""+destination.getSwitches());
 
         holder.itemView.setOnClickListener(view -> {
             destinationSetter.setDestination(destination);
@@ -44,33 +45,25 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
 
     @Override
     public int getItemCount() {
-        return destinationListProvider.getDestinationList().size();
+        return previousDestinationsListProvider.getPreviousPOIsList().size();
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        notifyDataSetChanged();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         private TextView title;
-        private TextView duration;
-        private TextView switches;
-
-
+        
         public void setTitle(String title) {
             this.title.setText(title);
-        }
-
-        public void setDuration(String duration) {
-            this.duration.setText(duration);
-        }
-
-        public void setSwitches(String switches) {
-            this.switches.setText(switches);
         }
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             this.title = itemView.findViewById(R.id.TextView_destinationItem_title);
-            this.duration = itemView.findViewById(R.id.TextView_destinationItem_duration);
-            this.switches = itemView.findViewById(R.id.TextView_destinationItem_switches);
         }
     }
 }

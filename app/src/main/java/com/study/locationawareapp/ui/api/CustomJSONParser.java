@@ -11,6 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.overlay.Polyline;
 
 import java.lang.reflect.GenericArrayType;
 import java.util.ArrayList;
@@ -30,10 +31,11 @@ public class CustomJSONParser {
                 JSONObject location = locations.getJSONObject(i);
 
                 String name = location.getString("name");
+                int UICCode = location.getInt("UICCode");
                 double lat = location.getDouble("lat");
                 double lng = location.getDouble("lng");
 
-                Destination destination = new Destination(name, lat, lng);
+                Destination destination = new Destination(name, UICCode, lat, lng);
                 destinations.add(destination);
             }
 
@@ -50,9 +52,44 @@ public class CustomJSONParser {
         double distance = routeParserDistance(data);
         int duration = routeParserDuration(data);
 
-        Route route = new Route(coordinates, steps, distance, duration);
+        return new Route(coordinates, steps, distance, duration);
+    }
 
+    public static Polyline NSRouteParser(String data){
+        Polyline route = new Polyline();
+        try {
+            JSONObject jsonObject = new JSONObject(data);
+            JSONArray jsonArray = jsonObject.getJSONArray("trips");
+            JSONObject trip = jsonArray.getJSONObject(0);
+            JSONArray legs = trip.getJSONArray("legs");
+            for (int i = 0; i < legs.length(); i++) {
+                JSONObject leg = legs.getJSONObject(i);
+                JSONArray stops = leg.getJSONArray("stops");
+                for (int j = 0; j < stops.length(); j++) {
+                    JSONObject stop = stops.getJSONObject(j);
+                    double lng = stop.getDouble("lng");
+                    double lat = stop.getDouble("lat");
+                    route.addPoint(new GeoPoint(lat, lng));
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         return route;
+    }
+
+    public static String GetURLFromNSMessage(String data){
+        String url = null;
+        try {
+            JSONObject jsonObject = new JSONObject(data);
+            JSONArray jsonArray = jsonObject.getJSONArray("trips");
+            JSONObject trip = jsonArray.getJSONObject(0);
+            JSONObject shareURL = trip.getJSONObject("shareUrl");
+            url = shareURL.getString("uri");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return url;
     }
 
     private static double routeParserDistance(String data) {
@@ -152,5 +189,31 @@ public class CustomJSONParser {
         }
 
         return steps;
+    }
+
+    public static Destination StationParser(String data){
+       Destination destinations = new Destination("No station in 25 km radius",0,0,0);
+
+        try {
+            JSONObject jsonObject = new JSONObject(data);
+            JSONArray payload = jsonObject.getJSONArray("payload");
+            JSONObject stations = payload.getJSONObject(0);
+            JSONArray locations = stations.getJSONArray("locations");
+            if (locations.length()>0){
+                JSONObject station = locations.getJSONObject(0);
+
+                String name = station.getString("name");
+                int UICCode = station.getInt("UICCode");
+                double lat = station.getDouble("lat");
+                double lng = station.getDouble("lng");
+
+                destinations = new Destination(name,UICCode,lat,lng);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return destinations;
     }
 }

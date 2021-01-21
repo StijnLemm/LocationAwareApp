@@ -10,6 +10,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.study.locationawareapp.R;
 
+import java.util.Observable;
+import java.util.Observer;
+
 public class DirectionAdapter extends RecyclerView.Adapter<DirectionAdapter.ViewHolder> {
     private DirectionsListProvider directionsListProvider;
 
@@ -41,6 +44,7 @@ public class DirectionAdapter extends RecyclerView.Adapter<DirectionAdapter.View
     public int getItemCount() {
         return directionsListProvider.getRouteSteps().size();
     }
+
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 

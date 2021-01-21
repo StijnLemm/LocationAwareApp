@@ -4,18 +4,21 @@ import org.json.JSONObject;
 import org.osmdroid.util.GeoPoint;
 
 public class Destination {
+    private final int UICCode;
     private String name;
     private double latitude;
     private double longitude;
     private double distance;
-    private int durationInMinutes;
-    private int switches;
 
-    public Destination(String name, double latitude, double longitude) {
+    public Destination(String name, int UICCode, double latitude, double longitude) {
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.durationInMinutes = 0;
+        this.UICCode = UICCode;
+    }
+
+    public int getUICCode() {
+        return UICCode;
     }
 
     public String getName() {
@@ -48,25 +51,6 @@ public class Destination {
 
     public void setDistance(double distance) {
         this.distance = distance;
-    }
-
-    public String getDurationInMinutes() {
-        int minutes = durationInMinutes % 60;
-        int hours = (durationInMinutes - minutes) / 60;
-
-        return hours + ":" + minutes;
-    }
-
-    public void setDurationInMinutes(int durationInMinutes) {
-        this.durationInMinutes = durationInMinutes;
-    }
-
-    public int getSwitches() {
-        return switches;
-    }
-
-    public void setSwitches(int switches) {
-        this.switches = switches;
     }
 
     public GeoPoint getGeoPoint() {

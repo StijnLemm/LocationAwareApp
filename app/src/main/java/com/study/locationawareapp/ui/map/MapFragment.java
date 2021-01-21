@@ -1,8 +1,11 @@
 package com.study.locationawareapp.ui.map;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.DashPathEffect;
 import android.os.Bundle;
+import android.util.ArraySet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +22,7 @@ import com.study.locationawareapp.R;
 import com.study.locationawareapp.ui.AppViewModel;
 import com.study.locationawareapp.ui.destination.Destination;
 
+import org.jetbrains.annotations.NotNull;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.library.BuildConfig;
 import org.osmdroid.util.GeoPoint;
@@ -29,23 +33,28 @@ import org.osmdroid.views.overlay.Polyline;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Queue;
 import java.util.Set;
 
 import static android.content.ContentValues.TAG;
 
-public class MapFragment extends Fragment implements View.OnClickListener, MapController, Observer {
+public class MapFragment extends Fragment implements View.OnClickListener, MapController, Observer, TrainRouteView {
 
     private static final String POI_KEY = "POI";
     private static final String SAVED_DOY_KEY = "DOY";
+    private static final String PREVIOUS_POI_KEY = "PREVIOUS_POI";
 
     private MapView mapView;
     private MapViewModel mapViewModel;
     private AppViewModel appViewModel;
     private List<Destination> pois;
     private Polyline routeDrawing;
+    private Polyline trainDrawing;
+    private ArrayList<Destination> previousPois;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -56,16 +65,22 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         this.mapViewModel =
-                new ViewModelProvider(this).get(MapViewModel.class);
+                new ViewModelProvider(this.getActivity()).get(MapViewModel.class);
         this.appViewModel =
                 new ViewModelProvider(this.getActivity()).get(AppViewModel.class);
 
         appViewModel.setLocationProvider(mapViewModel);
-
-        appViewModel.subject.attachObserver(this);
+        appViewModel.setTrainRouteView(this);
+        appViewModel.poiChangedSubject.attachObserver(this);
 
         this.pois = this.loadSavedPois();
         this.routeDrawing = new Polyline();
+        this.trainDrawing = new Polyline();
+
+        appViewModel.routeChangedSubject.attachObserver(this);
+
+        appViewModel.setPreviousPOIs(loadPreviousPOIs());
+        appViewModel.previousPOIsChangedSubject.attachObserver(this);
 
         return inflater.inflate(R.layout.fragment_map, container, false);
     }
@@ -79,7 +94,8 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
         this.mapViewModel.setController(this);
         this.mapViewModel.initMapView(this.mapView);
 
-        drawRoute();
+        appViewModel.setPOIs(pois);
+
 
         FloatingActionButton fab = view.findViewById(R.id.Button_CenterMapButton);
         fab.setOnClickListener(this);
@@ -90,24 +106,24 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
      */
     @Override
     public void setCenter(GeoPoint location) {
-
         this.loadPois(location);
-
-        this.getActivity().runOnUiThread(() -> {
-            this.mapView.getController().setCenter(location);
-        });
+        if (getActivity() != null)
+            this.getActivity().runOnUiThread(() -> {
+                this.mapView.getController().setCenter(location);
+            });
     }
 
     @Override
     public void setCenterAnimated(GeoPoint location) {
-        this.getActivity().runOnUiThread(() -> {
-            this.mapView.getController().zoomTo(18d);
-            this.mapView.getController().animateTo(location);
-        });
+        if (getActivity() != null)
+            this.getActivity().runOnUiThread(() -> {
+                this.mapView.getController().zoomTo(18d);
+                this.mapView.getController().animateTo(location);
+            });
     }
 
     public void drawPOIs(List<Destination> pois) {
-        if (this.getActivity() != null) {
+        if (this.getActivity() != null)
             this.getActivity().runOnUiThread(() -> {
                 for (Destination destination : pois) {
                     GeoPoint point = new GeoPoint(destination.getLatitude(), destination.getLongitude());
@@ -119,20 +135,38 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
                 }
                 mapView.invalidate();
             });
-        }
+    }
+
+    @Override
+    public void drawTrainRoute(Polyline polyline) {
+        if (getActivity() != null)
+            getActivity().runOnUiThread(() -> {
+                //TODO stippeltjes/streepjes :)
+                mapView.getOverlayManager().remove(this.trainDrawing);
+                polyline.getOutlinePaint().setPathEffect(new DashPathEffect(new float[]{10, 20}, 0));
+                polyline.getOutlinePaint().setColor(getResources().getColor(R.color.blue_2));
+
+                mapView.getOverlayManager().add(polyline);
+                mapView.invalidate();
+                this.trainDrawing = polyline;
+            });
     }
 
     public void drawRoute() {
-        mapView.getOverlayManager().remove(routeDrawing);
+        if (getActivity() != null)
+            getActivity().runOnUiThread(() -> {
 
-        this.routeDrawing = new Polyline();
-        ArrayList<GeoPoint> coordinates = appViewModel.getRouteCoordinates();
+                mapView.getOverlayManager().remove(routeDrawing);
 
-        routeDrawing.setPoints(coordinates);
+                this.routeDrawing = new Polyline();
+                ArrayList<GeoPoint> coordinates = appViewModel.getRouteCoordinates();
 
-        mapView.getOverlayManager().add(routeDrawing);
+                routeDrawing.setPoints(coordinates);
 
-        mapView.invalidate();
+                mapView.getOverlayManager().add(routeDrawing);
+
+                mapView.invalidate();
+            });
 
         Log.d(TAG, "drawRoute: done drawing line");
     }
@@ -160,6 +194,9 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
     private Calendar savedDate;
 
     private void savePoisIfNeeded(List<Destination> destinations) {
+        if (getActivity() == null)
+            return;
+
         //getting the current time in milliseconds, and creating a Date object from it:
         Calendar calendar = Calendar.getInstance(); //or simply new Date();
         calendar.setTimeInMillis(System.currentTimeMillis());
@@ -208,15 +245,63 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
                 destinations.add(destination);
             }
         }
+
+
         return destinations;
     }
 
+    public ArrayList<Destination> loadPreviousPOIs() {
+        ArrayList<Destination> previousPOIs = new ArrayList<>();
+        if (getActivity() != null) {
+            Gson gson = new Gson();
+
+            SharedPreferences mPrefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+
+            Set<String> previousPOIsJson = mPrefs.getStringSet(PREVIOUS_POI_KEY, null);
+
+            if (previousPOIsJson != null) {
+                for (String jsonDestination : previousPOIsJson) {
+                    Destination destination = gson.fromJson(jsonDestination, Destination.class);
+                    previousPOIs.add(destination);
+                }
+            }
+        }
+        this.previousPois = previousPOIs;
+        return previousPOIs;
+    }
+
+
     @Override
     public void update(Observable o, Object arg) {
-        List<Destination> destinations = this.appViewModel.getLoadedPOIs();
+        if (arg.equals(0)) {
+            List<Destination> destinations = this.appViewModel.getDestinationList();
 
-        this.savePoisIfNeeded(destinations);
+            this.savePoisIfNeeded(destinations);
 
-        drawPOIs(destinations);
+            drawPOIs(destinations);
+        } else if (arg.equals(1)) {
+            drawRoute();
+        } else if (arg.equals(2)) {
+            ArrayList<Destination> previousPOIs = appViewModel.getPreviousPOIsList();
+            this.savePreviousPOIs(previousPOIs);
+        }
+    }
+
+    private void savePreviousPOIs(ArrayList<Destination> previousPOIs) {
+        if (getActivity() == null)
+            return;
+
+        Set<String> destinationStrings = new HashSet<>();
+        SharedPreferences mPrefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = mPrefs.edit();
+
+        for (Destination prevPOI : previousPOIs) {
+            Gson gson = new Gson();
+            String destinationString = gson.toJson(prevPOI);
+            destinationStrings.add(destinationString);
+        }
+
+        editor.putStringSet(PREVIOUS_POI_KEY, destinationStrings);
+        editor.apply();
     }
 }
