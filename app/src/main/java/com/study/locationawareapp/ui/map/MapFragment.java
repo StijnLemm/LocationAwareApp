@@ -1,5 +1,6 @@
 package com.study.locationawareapp.ui.map;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.DashPathEffect;
@@ -30,9 +31,11 @@ import org.osmdroid.views.overlay.Polyline;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Queue;
 import java.util.Set;
 
 import static android.content.ContentValues.TAG;
@@ -48,7 +51,6 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
     private AppViewModel appViewModel;
     private List<Destination> pois;
     private Polyline routeDrawing;
-    private Polyline trainRouteDrawing;
     private Polyline trainDrawing;
 
     @Override
@@ -187,6 +189,9 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
     private Calendar savedDate;
 
     private void savePoisIfNeeded(List<Destination> destinations) {
+        if (getActivity()==null)
+            return;
+
         //getting the current time in milliseconds, and creating a Date object from it:
         Calendar calendar = Calendar.getInstance(); //or simply new Date();
         calendar.setTimeInMillis(System.currentTimeMillis());
@@ -277,6 +282,9 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
     }
 
     private void savePreviousPOIs(ArrayList<Destination> previousPOIs) {
+        if (getActivity()==null)
+            return;
+
         SharedPreferences mPrefs = getActivity().getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = mPrefs.edit();
 
@@ -291,11 +299,5 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
         editor.putStringSet(PREVIOUS_POI_KEY, destinationStrings);
         editor.apply();
     }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-    }
-
 
 }

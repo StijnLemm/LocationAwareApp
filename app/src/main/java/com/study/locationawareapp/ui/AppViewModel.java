@@ -7,7 +7,6 @@ import com.study.locationawareapp.ui.api.APIModel;
 import com.study.locationawareapp.ui.api.TravelProfile;
 import com.study.locationawareapp.ui.destination.CurrentDestinationHolder;
 import com.study.locationawareapp.ui.destination.Destination;
-import com.study.locationawareapp.ui.destination.DestinationFragment;
 import com.study.locationawareapp.ui.destination.DestinationModel;
 import com.study.locationawareapp.ui.destination.DestinationSetter;
 import com.study.locationawareapp.ui.destination.DestinationListProvider;
@@ -23,10 +22,9 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.overlay.Polyline;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
+import java.util.Queue;
 
 public class AppViewModel extends ViewModel implements DestinationSetter, DestinationListProvider, POIsHolder, RouteHolder, DirectionsListProvider, PreviousDestinationsListProvider {
     public Subject poiChangedSubject;
@@ -58,6 +56,7 @@ public class AppViewModel extends ViewModel implements DestinationSetter, Destin
         Destination closestStation = this.getClosestStation(this.lastLocation);
         apiModel.getRoute(locationProvider.getLastLocation(), closestStation.getGeoPoint());
         apiModel.getNSInformation(closestStation.getUICCode(), destination.getUICCode());
+        addPreviousPOI(destination);
     }
 
     public void setTrainRouteView(TrainRouteView trainRouteView) {
@@ -92,7 +91,7 @@ public class AppViewModel extends ViewModel implements DestinationSetter, Destin
 
     @Override
     public void setTrainRoute(Polyline route) {
-        if(this.trainRouteView != null)
+        if (this.trainRouteView != null)
             this.trainRouteView.drawTrainRoute(route);
     }
 
@@ -142,9 +141,6 @@ public class AppViewModel extends ViewModel implements DestinationSetter, Destin
     public void addPreviousPOI(Destination destination) {
         this.previousPois.add(destination);
 
-        if (previousPois.size() > 5)
-            previousPois.remove((Destination) previousPois.toArray()[0]);
-
         previousPOIsChangedSubject.notifyObservers();
     }
 
@@ -161,12 +157,12 @@ public class AppViewModel extends ViewModel implements DestinationSetter, Destin
     public Destination getClosestStation(GeoPoint currentLocation) {
         double smallestDistance = Double.MAX_VALUE;
 
-        Destination closestStation = new Destination("No stations found",0,0,0);
+        Destination closestStation = new Destination("No stations found", 0, 0, 0);
 
         for (Destination destination : pois) {
-            GeoPoint geoPoint = new GeoPoint(destination.getLatitude(),destination.getLongitude());
+            GeoPoint geoPoint = new GeoPoint(destination.getLatitude(), destination.getLongitude());
             double distance = geoPoint.distanceToAsDouble(currentLocation);
-            if (smallestDistance>distance) {
+            if (smallestDistance > distance) {
                 closestStation = destination;
                 smallestDistance = distance;
             }
@@ -180,4 +176,6 @@ public class AppViewModel extends ViewModel implements DestinationSetter, Destin
     public void setCurrentDestinationHolder(CurrentDestinationHolder currentDestinationHolder) {
         this.apiModel.setCurrentDestinationHolder(currentDestinationHolder);
     }
+
+
 }

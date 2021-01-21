@@ -74,14 +74,20 @@ public class DestinationFragment extends Fragment implements DestinationSetter, 
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Log.d(TAG, "SearchView submitted: " + query);
-                // Get the top from list view
-                Destination destination = adapter.getItem(0);
 
-                // Check if there are any results
-                if (destination == null)
-                    return false;
+                if (adapter.getCount()>0) {
 
-                appViewModel.setDestination(destination);
+                    // Get the top from list view
+                    Destination destination = adapter.getItem(0);
+
+                    // Clear focus so the keyboard doesn't show
+                    searchView.clearFocus();
+                    // Clear the search bar and this will clear the list view
+                    searchView.setQuery("",true);
+
+                    appViewModel.setDestination(destination);
+                }
+
                 return false;
             }
 
