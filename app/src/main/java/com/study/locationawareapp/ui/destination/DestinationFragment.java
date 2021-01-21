@@ -37,7 +37,6 @@ public class DestinationFragment extends Fragment implements DestinationSetter, 
     private ConstraintLayout placeholderCurrent;
     private AppViewModel appViewModel;
     private TextView textCurrent;
-    private WebView webView;
     private StationSuggestionAdapter adapter;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -49,7 +48,12 @@ public class DestinationFragment extends Fragment implements DestinationSetter, 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         DestinationAdapter destinationAdapter = new DestinationAdapter(appViewModel, appViewModel);
         recyclerView.setAdapter(destinationAdapter);
-        appViewModel.previousPOIsChangedSubject.attachObserver(destinationAdapter);
+        appViewModel.previousPOIsChangedSubject.attachObserver(((o, arg) -> {
+            if (getActivity() != null)
+                getActivity().runOnUiThread(()->{
+                    destinationAdapter.notifyDataSetChanged();
+                });
+        }));
 
         // Logic behind the search view
         SearchView searchView = root.findViewById(R.id.SearchView_destination);
@@ -68,7 +72,7 @@ public class DestinationFragment extends Fragment implements DestinationSetter, 
             // Clear focus so the keyboard doesn't show
             searchView.clearFocus();
             // Clear the search bar and this will clear the list view
-            searchView.setQuery("",true);
+            searchView.setQuery("", true);
         });
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -76,7 +80,7 @@ public class DestinationFragment extends Fragment implements DestinationSetter, 
             public boolean onQueryTextSubmit(String query) {
                 Log.d(TAG, "SearchView submitted: " + query);
 
-                if (adapter.getCount()>0) {
+                if (adapter.getCount() > 0) {
 
                     // Get the top from list view
                     Destination destination = adapter.getItem(0);
@@ -84,7 +88,7 @@ public class DestinationFragment extends Fragment implements DestinationSetter, 
                     // Clear focus so the keyboard doesn't show
                     searchView.clearFocus();
                     // Clear the search bar and this will clear the list view
-                    searchView.setQuery("",true);
+                    searchView.setQuery("", true);
 
                     appViewModel.setDestination(destination);
                 }
@@ -116,7 +120,6 @@ public class DestinationFragment extends Fragment implements DestinationSetter, 
         });
 
 
-
         //Creating the ArrayAdapter instance having the possible travel profiles
         ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, travelProfiles);
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -142,8 +145,8 @@ public class DestinationFragment extends Fragment implements DestinationSetter, 
 
     private String currentURLContent;
 
-    public void getNSWebView(View view){
-        if(currentURLContent != null){
+    public void getNSWebView(View view) {
+        if (currentURLContent != null) {
             CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
             builder.setToolbarColor(getResources().getColor(R.color.blue));
             CustomTabsIntent customTabsIntent = builder.build();

@@ -7,6 +7,7 @@ import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import com.study.locationawareapp.ui.destination.DestinationFragment;
 import com.study.locationawareapp.ui.directions.DirectionsFragment;
@@ -18,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
  * A [FragmentPagerAdapter] that returns a fragment corresponding to
  * one of the sections/tabs/pages.
  */
-public class SectionsPagerAdapter extends FragmentPagerAdapter {
+public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
 
     @StringRes
     private static final int[] TAB_TITLES = new int[]{R.string.title_destination, R.string.title_map, R.string.title_directions};
@@ -28,7 +29,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     private final DirectionsFragment directionsFragment;
 
     public SectionsPagerAdapter(Context context, FragmentManager fm) {
-        super(fm);
+        super(fm,BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         mContext = context;
         this.destinationFragment = new DestinationFragment();
         this.mapFragment = new MapFragment();

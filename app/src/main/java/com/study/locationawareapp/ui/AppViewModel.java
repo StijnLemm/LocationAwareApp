@@ -149,7 +149,6 @@ public class AppViewModel extends ViewModel implements DestinationSetter, Destin
     public void addPreviousPOI(Destination destination) {
         previousPois.remove(destination);
 
-
         this.previousPois.add(destination);
         previousPOIsChangedSubject.notifyObservers();
     }
