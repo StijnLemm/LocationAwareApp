@@ -18,6 +18,8 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;

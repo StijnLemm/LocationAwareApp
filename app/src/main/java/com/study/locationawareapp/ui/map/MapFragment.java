@@ -21,6 +21,7 @@ import com.study.locationawareapp.R;
 import com.study.locationawareapp.ui.AppViewModel;
 import com.study.locationawareapp.ui.destination.Destination;
 
+import org.jetbrains.annotations.NotNull;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.library.BuildConfig;
 import org.osmdroid.util.GeoPoint;
@@ -104,22 +105,23 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
     @Override
     public void setCenter(GeoPoint location) {
         this.loadPois(location);
-
-        this.getActivity().runOnUiThread(() -> {
-            this.mapView.getController().setCenter(location);
-        });
+        if(getActivity() != null)
+            this.getActivity().runOnUiThread(() -> {
+                this.mapView.getController().setCenter(location);
+            });
     }
 
     @Override
     public void setCenterAnimated(GeoPoint location) {
-        this.getActivity().runOnUiThread(() -> {
-            this.mapView.getController().zoomTo(18d);
-            this.mapView.getController().animateTo(location);
-        });
+        if(getActivity() != null)
+            this.getActivity().runOnUiThread(() -> {
+                this.mapView.getController().zoomTo(18d);
+                this.mapView.getController().animateTo(location);
+            });
     }
 
     public void drawPOIs(List<Destination> pois) {
-        if (this.getActivity() != null) {
+        if (this.getActivity() != null)
             this.getActivity().runOnUiThread(() -> {
                 for (Destination destination : pois) {
                     GeoPoint point = new GeoPoint(destination.getLatitude(), destination.getLongitude());
@@ -131,37 +133,38 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
                 }
                 mapView.invalidate();
             });
-        }
     }
 
     @Override
     public void drawTrainRoute(Polyline polyline) {
-        this.getActivity().runOnUiThread(() -> {
-            //TODO stippeltjes/streepjes :)
-            mapView.getOverlayManager().remove(this.trainDrawing);
-            polyline.getOutlinePaint().setPathEffect(new DashPathEffect(new float[]{10, 20}, 0));
-            polyline.getOutlinePaint().setColor(getResources().getColor(R.color.blue_2));
+        if(getActivity() != null)
+            getActivity().runOnUiThread(() -> {
+                //TODO stippeltjes/streepjes :)
+                mapView.getOverlayManager().remove(this.trainDrawing);
+                polyline.getOutlinePaint().setPathEffect(new DashPathEffect(new float[]{10, 20}, 0));
+                polyline.getOutlinePaint().setColor(getResources().getColor(R.color.blue_2));
 
-            mapView.getOverlayManager().add(polyline);
-            mapView.invalidate();
-            this.trainDrawing = polyline;
-        });
+                mapView.getOverlayManager().add(polyline);
+                mapView.invalidate();
+                this.trainDrawing = polyline;
+            });
     }
 
     public void drawRoute() {
-        this.getActivity().runOnUiThread(() -> {
+        if(getActivity() != null)
+            getActivity().runOnUiThread(() -> {
 
-            mapView.getOverlayManager().remove(routeDrawing);
+                mapView.getOverlayManager().remove(routeDrawing);
 
-            this.routeDrawing = new Polyline();
-            ArrayList<GeoPoint> coordinates = appViewModel.getRouteCoordinates();
+                this.routeDrawing = new Polyline();
+                ArrayList<GeoPoint> coordinates = appViewModel.getRouteCoordinates();
 
-            routeDrawing.setPoints(coordinates);
+                routeDrawing.setPoints(coordinates);
 
-            mapView.getOverlayManager().add(routeDrawing);
+                mapView.getOverlayManager().add(routeDrawing);
 
-            mapView.invalidate();
-        });
+                mapView.invalidate();
+            });
 
         Log.d(TAG, "drawRoute: done drawing line");
     }
@@ -248,16 +251,18 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
 
     public ArrayList<Destination> loadPreviousPOIs(){
         ArrayList<Destination> previousPOIs = new ArrayList<>();
-        Gson gson = new Gson();
+        if(getActivity() != null){
+            Gson gson = new Gson();
 
-        SharedPreferences mPrefs = getActivity().getPreferences(Context.MODE_PRIVATE);
+            SharedPreferences mPrefs = getActivity().getPreferences(Context.MODE_PRIVATE);
 
-        Set<String> previousPOIsJson = mPrefs.getStringSet(PREVIOUS_POI_KEY, null);
+            Set<String> previousPOIsJson = mPrefs.getStringSet(PREVIOUS_POI_KEY, null);
 
-        if (previousPOIsJson != null) {
-            for (String jsonDestination : previousPOIsJson) {
-                Destination destination = gson.fromJson(jsonDestination, Destination.class);
-                previousPOIs.add(destination);
+            if (previousPOIsJson != null) {
+                for (String jsonDestination : previousPOIsJson) {
+                    Destination destination = gson.fromJson(jsonDestination, Destination.class);
+                    previousPOIs.add(destination);
+                }
             }
         }
 
@@ -288,16 +293,15 @@ public class MapFragment extends Fragment implements View.OnClickListener, MapCo
         SharedPreferences mPrefs = getActivity().getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = mPrefs.edit();
 
-        Set<String> destinationStrings = new HashSet<>();
+            for (Destination prevPOI : previousPOIs) {
+                Gson gson = new Gson();
+                String destinationString = gson.toJson(prevPOI);
+                destinationStrings.add(destinationString);
+            }
 
-        for (Destination prevPOI : previousPOIs) {
-            Gson gson = new Gson();
-            String destinationString = gson.toJson(prevPOI);
-            destinationStrings.add(destinationString);
+            editor.putStringSet(PREVIOUS_POI_KEY, destinationStrings);
+            editor.apply();
         }
-
-        editor.putStringSet(PREVIOUS_POI_KEY, destinationStrings);
-        editor.apply();
     }
 
 }

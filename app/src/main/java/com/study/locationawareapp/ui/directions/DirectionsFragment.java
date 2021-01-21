@@ -1,5 +1,7 @@
 package com.study.locationawareapp.ui.directions;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -46,6 +48,7 @@ public class DirectionsFragment extends Fragment implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        getActivity().runOnUiThread(()-> this.adapter.notifyDataSetChanged());
+        if(getActivity() != null)
+            getActivity().runOnUiThread(()-> this.adapter.notifyDataSetChanged());
     }
 }
