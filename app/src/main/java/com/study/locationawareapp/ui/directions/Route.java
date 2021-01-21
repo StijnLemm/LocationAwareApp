@@ -28,14 +28,6 @@ public class Route {
         return steps;
     }
 
-    public double getDistance() {
-        return distance;
-    }
-
-    public int getDuration() {
-        return duration;
-    }
-
     /**
      * method that returns true if the list changed
      *
@@ -81,9 +73,9 @@ public class Route {
             }
 
             // Loop through the steps and if we have visited all the point of that step we delete the step
-            for (int i = steps.size() - 1; i > 0; i--) {
+            for (int i = steps.size() - 1; i >= 0; i--) {
                 Step step = steps.get(i);
-                if (step.getEndWayPoint() < firstPoint)
+                if (step.getEndWayPoint() <= firstPoint)
                     steps.remove(i);
             }
 
