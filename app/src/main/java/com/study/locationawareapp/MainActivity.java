@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private static final long LISTENER_INTERVAL = 5000;
     private static final int PERMISSIONS_REQUEST_CODE = 1;
     private Timer timer;
+    private AppViewModel appViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
     private void startLocationListener(){
         MapViewModel mapViewModel =
                 new ViewModelProvider(this).get(MapViewModel.class);
-        AppViewModel appViewModel =
+        this.appViewModel =
                 new ViewModelProvider(this).get(AppViewModel.class);
         this.timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
@@ -114,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        appViewModel.resetLastLocation();
         timer.cancel();
     }
 }

@@ -190,4 +190,7 @@ public class AppViewModel extends ViewModel implements DestinationSetter, Destin
     }
 
 
+    public void resetLastLocation() {
+        this.lastLocation = null;
+    }
 }

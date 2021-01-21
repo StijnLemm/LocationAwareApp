@@ -56,8 +56,7 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         private TextView title;
-
-
+        
         public void setTitle(String title) {
             this.title.setText(title);
         }
